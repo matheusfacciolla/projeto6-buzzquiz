@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuzzQuizz</title>
+
+    <!-- links style  -->
+    <link href="css/reset.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- links fonts  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&display=swap"rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <h1>BuzzQuizz</h1>
+    </header>
+
+    <main>
+        <!-- Tela 3.1 -->
+        <section class="tela_3-1">
+            <h2>Comece pelo começo</h2>
+
+            <article class="infos">
+                <input type="text" minlength="20" maxlength="65" placeholder="Título do seu quizz">
+                <input type="url" placeholder="URL da imagem do seu quizz">
+                <input type="number" min="3" placeholder="Quantidade de perguntas do quizz">
+                <input type="number" min="2" placeholder="Quantidade de níveis do quizz">
+            </article>
+
+            <button class="padrao" type="button" onclick="">Prosseguir pra criar perguntas</button>
+        </section>
+
+        <!-- Tela 3.2 -->
+        <section class="tela_3-2 escondido">
+            <h2>Crie suas perguntas</h2>
+
+            <div class="perguntas">
+                <article class="pergunta1">
+                    <h3>Pergunta 1</h3>
+                    <input type="text" minlength="20" placeholder="Texto da pergunta">
+                    <input type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
+                    <h3>Resposta correta</h3>
+                    <input type="text" minlength="1" placeholder="Resposta correta">
+                    <input type="url" placeholder="URL da imagem">
+                    <h3>Respostas incorretas</h3>
+                    <input type="text" minlength="1" placeholder="Resposta incorreta 1">
+                    <input type="url" placeholder="URL da imagem 1">
+                    <input type="text" minlength="1" placeholder="Resposta incorreta 2">
+                    <input type="url" placeholder="URL da imagem 2">
+                    <input type="text" minlength="1" placeholder="Resposta incorreta 3">
+                    <input type="url" placeholder="URL da imagem 3">
+                </article>
+
+                <article class="pergunta2">
+                    <h3>Pergunta 2</h3>
+                    <img src="imagens/Vector.svg" alt="icon">
+                </article>
+
+                <article class="pergunta3">
+                    <h3>Pergunta 2</h3>
+                    <img src="imagens/Vector.svg" alt="icon">
+                </article>     
+            </div>
+
+            <button class="padrao" type="button" onclick="">Prosseguir pra criar níveis</button>
+        </section>
+
+        <!-- Tela 3.3 -->
+        <section class="tela_3-3 escondido">
+            <h2>Agora, decida os níveis!</h2>
+
+            <div class="niveis">
+                <article class="nivel1">
+                    <h3>Nível 1</h3>
+                    <input type="text" minlength="10" placeholder="Título do nível">
+                    <input type="number" min="0" max="100" placeholder="% de acerto mínima">
+                    <input type="url" placeholder="URL da imagem do nível">
+                    <input type="text" minlength="30" placeholder="Descrição do nível">
+                </article>
+
+                <article class="nivel2">
+                    <h3>Nível 2</h3>
+                    <img src="imagens/Vector.svg" alt="icon">
+                </article>
+
+                <article class="nivel3">
+                    <h3>Nível 3</h3>
+                    <img src="imagens/Vector.svg" alt="icon">
+                </article>     
+            </div>
+
+            <button class="padrao" type="button" onclick="">Finalizar Quizz</button>
+        </section>       
+
+        <!-- Tela 3.4 -->
+        <section class="tela_3-4 escondido">
+            <h2>Seu quizz está pronto!</h2>
+
+            <div class="quiz-finalizado">
+                <img src="imagens/Rectangle 34.png" alt="O quão Potterhead é você?">
+                <p>O quão Potterhead é você?</p>
+            </div>
+
+            <button class="acessar-quiz" type="button" onclick="">Acessar Quizz</button>
+            <button class="voltar-home" type="button" onclick="">Voltar pra home</button>
+        </section>  
+
+    </main>
+</body>
+
+</html>
