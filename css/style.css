@@ -20,7 +20,7 @@ header {
     left: 0;
 }
 
-header h1 {
+header > h1 {
     font-family: Roboto;
     font-style: normal;
     font-weight: bold;
@@ -34,25 +34,34 @@ main {
     flex-direction: column;
     align-items: center;
     margin-top: 69px;
-    width: 100%;
-    height: 100%;
 }
 
-/* Tela 1 */
+/* Estilos para Section Seus Quizzes */
 .seus-quizzes {
-    width: 340px;
-    height: 250px;
     padding-top: 31px;
 }
-.lista-seus-quizzes {
+.adicionar-primeiroquizz {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 340px;
+    height: 181px;
     background-color: #EDEDED;
     border: 2px dashed #D5D5D5;
     border-radius: 5px;
 }
-.lista-seus-quizzes > p {
+.adicionar-primeiroquizz > span {
+    display: flex;
+    align-items: center;
+    width: 250px;
+    height: 107px;
+    line-height: 23px;
+    font-size: 20px;
+    text-align: center;
     color: #B9B9B9;
 }
+
 .criar-quizz {
     display: flex;
     align-items: center;
@@ -69,12 +78,90 @@ main {
     color: #EC362D;
 }
 
-
-
+.lista-seus-quizzes {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 340px;
+}
+.lista-seus-quizzes > span{
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+.lista-seus-quizzes > span > p{
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+}
+.lista-seus-quizzes span > ion-icon{
+    font-size: 30px;
+    color: #EC362D;
+}
+.seu-quizz {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    height: 180px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(https://images8.alphacoders.com/929/thumb-1920-929202.jpg);
+    background-size: 100%;
+}
+.seu-quizz > span {
+    display: flex;
+    align-items: center;
+    width: 301px;
+    height: 54px;
+    font-family: Roboto;
+    font-weight: normal;
+    font-size: 19px;
+    line-height: 22px;
+    color: #FFFFFF;
+}
+/* Estilos para Section Todos Quizzes */
+.todos-quizzes {
+    margin-top: 35px;
+}
+.lista-todos-quizzes {
+    width: 340px;
+}
+.lista-todos-quizzes > p {
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+}
+.quizz {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+    height: 180px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(https://wallpapercave.com/wp/wp4162201.png);
+    background-size: 100%;
+}
+.quizz > span {
+    display: flex;
+    align-items: center;
+    width: 301px;
+    height: 58px;
+    font-family: Roboto;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 22px;
+    color: #FFFFFF;
+}
 
 /* Tela 3.1 - Principal */
 
-section {
+.tela_3-1 {
     width: 100%;
     height: 100%;
     flex-direction: column;
@@ -82,7 +169,7 @@ section {
     align-items: center;
 }
 
-section h2 {
+.tela_3-1 h2 {
     margin-top: 37px;
     margin-bottom: 29px;
     font-family: Roboto;
@@ -91,8 +178,7 @@ section h2 {
     font-size: 20px;
     line-height: 23px;
 }
-
-article {
+.infos {
     width: 375px;
     height: 256px;
     flex-direction: column;
@@ -103,7 +189,7 @@ article {
     background-color: #FFFFFF;
 }
 
-article input {
+.infos input {
     width: 341px;
     height: 46px;
     border-radius: 5px;
@@ -141,7 +227,7 @@ article input {
 
 /* Tela 3.2 */
 
-h3 {
+.pergunta2 > h3 {
     font-family: Roboto;
     font-style: normal;
     font-weight: bold;

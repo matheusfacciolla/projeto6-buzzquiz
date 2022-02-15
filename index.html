@@ -25,16 +25,54 @@
         <!-- Tela 1 -->
         <!-- Região onde vai ficar o SEUS QUIZZES -->
         <section class="seus-quizzes">
-            <article class="lista-seus-quizzes">
-                <p>Você não criou nenhum quizz ainda :(</p>
+            <!-- Se não tiver nenhum criado ainda -->
+            <article class="adicionar-primeiroquizz escondido">
+                <span>
+                    <p>Você não criou nenhum quizz ainda :(</p>
+                </span>
                 <div class="criar-quizz">
                     <p>Criar Quizz</p>
                 </div>
             </article>
+
+            <!-- Se tiver algum criado já -->
+            <article class="lista-seus-quizzes">
+                <span>
+                    <p>Seus Quizzes</p>
+                    <ion-icon name="add-circle"></ion-icon>
+                </span>
+                <!-- Seu Quizz Individual -->
+                <div class="seu-quizz">
+                    <span>
+                        <p>O quão Potterhead é você?</p>
+                    </span>
+                </div>
+                <div class="seu-quizz">
+                    <span>
+                        <p>O quão Potterhead é você?</p>
+                    </span>
+                </div>
+            </article>
         </section>
 
-        <section>
-
+        <!-- Região onde fica "Todos os Quizzes" -->
+        <section class="todos-quizzes">
+            <!-- Lista contendo "Todos os Quizzes" -->
+            <article class="lista-todos-quizzes">
+                <p>Todos os Quizzes</p>
+                <!-- Quizz Individual -->
+                <div class="quizz">
+                    <span>
+                        <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
+                    </span>
+                </div>
+                <!-- Quizz Individual -->
+                <div class="quizz">
+                    <span>
+                        <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
+                    </span>
+                </div>
+            </article>
         </section>
 
 
@@ -139,6 +177,10 @@
         </section>  
 
     </main>
+    
+    <!-- Scripts -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 
 </html>
