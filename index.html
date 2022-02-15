@@ -18,161 +18,16 @@
 
 <body>
     <header>
-        <h1>BuzzQuizz</h1>
+        <h1 onclick="home()">BuzzQuizz</h1>
     </header>
 
     <main>
+        <div id="teste">
         
-        <!-- Tela 1 -->
-        <!-- Região onde vai ficar o SEUS QUIZZES -->
-        <section class="seus-quizzes escondido">
-            <!-- Se não tiver nenhum Quizz criado ainda -->
-            <article class="adicionar-primeiroquizz escondido">
-                <span>
-                    <p>Você não criou nenhum quizz ainda :(</p>
-                </span>
-                <div class="criar-quizz">
-                    <p>Criar Quizz</p>
-                </div>
-            </article>
-
-            <!-- Se tiver algum Quizz criado já -->
-            <article class="lista-seus-quizzes">
-                <span>
-                    <p>Seus Quizzes</p>
-                    <ion-icon name="add-circle"></ion-icon>
-                </span>
-                <!-- Seu Quizz Individual -->
-                <div class="seu-quizz">
-                    <span>
-                        <p>O quão Potterhead é você?</p>
-                    </span>
-                </div>
-                <!-- Seu Quizz Individual -->
-                <div class="seu-quizz">
-                    <span>
-                        <p>O quão Potterhead é você?</p>
-                    </span>
-                </div>
-            </article>
-        </section>
-
-        <!-- Região onde fica "Todos os Quizzes" -->
-        <section class="todos-quizzes escondido">
-            <!-- Lista contendo "Todos os Quizzes" -->
-            <article class="lista-todos-quizzes">
-                <p>Todos os Quizzes</p>
-                <!-- Quizz Individual -->
-                <div class="quizz">
-                    <span>
-                        <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
-                    </span>
-                </div>
-                <!-- Quizz Individual -->
-                <div class="quizz">
-                    <span>
-                        <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
-                    </span>
-                </div>
-            </article>
-        </section>
-
-        <!-- Tela 2 -->
-        <!-- Section com o "Tema" do Quizz -->
-        <section class="tema-quizz">
-            <span>
-                <p>O quão Potterhead é você?</p>
-            </span>
-        </section>
-
-        <!-- Section com a perguntas do "Quizz" -->
-        <section class="perguntas-quizz">
-            <!-- Conteiner contendo toda a "Pergunta" -->
-            <article class="conteiner-pergunta-maior">
-                <!-- Parte Interna do Conteiner -->
-                <div class="conteiner-pegunta-menor">
-                    <div class="titulo-pergunta">
-                        <p>Em qual animal Olho-Tonto Moody transfigurou Malfoy?</p>
-                    </div>
-                    <!-- Alternativas -->
-                    <div class="alternativas-pergunta">
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Gatineo</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Ratata</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Sapo Gordo</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Furão</p>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Conteiner contendo toda a "Pergunta" -->
-            <article class="conteiner-pergunta-maior">
-                <!-- Parte Interna do Conteiner -->
-                <div class="conteiner-pegunta-menor">
-                    <div class="titulo-pergunta">
-                        <p>Em qual animal Olho-Tonto Moody transfigurou Malfoy?</p>
-                    </div>
-                    <!-- Alternativas -->
-                    <div class="alternativas-pergunta">
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Gatineo</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Ratata</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Sapo Gordo</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Furão</p>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        </section>
-
-        <!-- Tela 3 -->
-        <!-- Tela 3.1 -->
-        <section class="tela_3-1 escondido">
+        </div>
+        <!-- Tela 3 
+         Tela 3.1 
+        <section class="tela_3-1">
             <h2>Comece pelo começo</h2>
 
             <article class="infos">
@@ -182,11 +37,11 @@
                 <input type="number" min="2" placeholder="Quantidade de níveis do quizz">
             </article>
 
-            <button class="padrao" type="button" onclick="">Prosseguir pra criar perguntas</button>
+            <button class="padrao" type="button" onclick="prosseguirPerguntas()">Prosseguir pra criar perguntas</button>
         </section>
 
-        <!-- Tela 3.2 -->
-        <section class="tela_3-2 escondido">
+          Tela 3.2  
+        <section class="tela_3-2">
             <h2>Crie suas perguntas</h2>
 
             <div class="perguntas">
@@ -209,7 +64,7 @@
                 <article class="pergunta2">
                     <h3>Pergunta 2</h3>
                     <img src="imagens/Vector.svg" alt="icon">
-                </article>
+                </article> 
 
                 <article class="pergunta3">
                     <h3>Pergunta 2</h3>
@@ -217,11 +72,11 @@
                 </article>     
             </div>
 
-            <button class="padrao" type="button" onclick="">Prosseguir pra criar níveis</button>
+            <button class="padrao" type="button" onclick="prosseguirNiveis()">Prosseguir pra criar níveis</button>
         </section>
 
-        <!-- Tela 3.3 -->
-        <section class="tela_3-3 escondido">
+         Tela 3.3 
+        <section class="tela_3-3">
             <h2>Agora, decida os níveis!</h2>
 
             <div class="niveis">
@@ -234,8 +89,10 @@
                 </article>
 
                 <article class="nivel2">
-                    <h3>Nível 2</h3>
-                    <img src="imagens/Vector.svg" alt="icon">
+                    <span>
+                        <h3>Nível 2</h3>
+                    </span>
+                    <span><img src="imagens/Vector.svg" alt="icon"></span>
                 </article>
 
                 <article class="nivel3">
@@ -244,11 +101,11 @@
                 </article>     
             </div>
 
-            <button class="padrao" type="button" onclick="">Finalizar Quizz</button>
+            <button class="padrao" type="button" onclick="finalizarQuizz()">Finalizar Quizz</button>
         </section>       
 
-        <!-- Tela 3.4 -->
-        <section class="tela_3-4 escondido">
+         Tela 3.4 
+        <section class="tela_3-4">
             <h2>Seu quizz está pronto!</h2>
 
             <div class="quiz-finalizado">
@@ -256,13 +113,15 @@
                 <p>O quão Potterhead é você?</p>
             </div>
 
-            <button class="acessar-quiz" type="button" onclick="">Acessar Quizz</button>
-            <button class="voltar-home" type="button" onclick="">Voltar pra home</button>
-        </section>  
+            <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
+            <button class="voltar-home" type="button" onclick="voltarHome()">Voltar pra home</button>
+        </section> 
+    -->
 
     </main>
     
     <!-- Scripts -->
+    <script src="script/script.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
