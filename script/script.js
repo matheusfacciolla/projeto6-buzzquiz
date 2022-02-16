@@ -2,7 +2,7 @@
 let alternativaSelecionada = null;
 let div = null;
 let numero = null;
-
+const apiBuzzQuizz = 'https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes';
 // So pra guardar um html
 let guardarhtml = `
 <!-- Se tiver algum Quizz criado já -->
@@ -12,13 +12,13 @@ let guardarhtml = `
                 <ion-icon name="add-circle" onclick="criarQuizz()"></ion-icon>
             </span>
             <!-- Seu Quizz Individual -->
-            <div class="seu-quizz" onclick="abrirQuizz()">
+            <div class="seu-quizz" onclick="abrirQuiz(this)">
                 <span>
                     <p>O quão Potterhead é você?</p>
                 </span>
             </div>
             <!-- Seu Quizz Individual -->
-            <div class="seu-quizz" onclick="abrirQuizz()">
+            <div class="seu-quizz" onclick="abrirQuiz(this)">
                 <span>
                     <p>O quão Potterhead é você?</p>
                 </span>
@@ -31,56 +31,10 @@ let guardarhtml = `
 
 
 let telaQuizz = `
-<!-- Tela 2 -->
-        <!-- Section com o "Tema" do Quizz -->
-        <section class="tema-quizz">
-            <span>
-                <p>O quão Potterhead é você?</p>
-            </span>
-        </section>
+<!-- Alternativas -->
 
-        <!-- Section com a perguntas do "Quizz" -->
-        <section class="perguntas-quizz">
-            <!-- Conteiner contendo toda a "Pergunta" -->
-            <article class="conteiner-pergunta-maior">
-                <!-- Parte Interna do Conteiner -->
-                <div class="conteiner-pegunta-menor">
-                    <div class="titulo-pergunta">
-                        <p>Em qual animal Olho-Tonto Moody transfigurou Malfoy?</p>
-                    </div>
-                    <!-- Alternativas -->
-                    <div class="alternativas-pergunta">
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta(this, 1)">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Gatineo</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta(this, 2)">    
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Ratata</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta(this, 3)">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Sapo Gordo</p>
-                            </span>
-                        </div>
-                        <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta(this, 4)">
-                            <img src="imagens/gris.png" alt="hogwarts">
-                            <span>
-                                <p>Furão</p>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </article>
+    <!-- Alternativa Individual -->
+    
             <div class="botoes-finalquizz">
                 <button>
                     <p>Reiniciar Quizz</p>
@@ -89,7 +43,7 @@ let telaQuizz = `
                     <p>Voltar para home</p>
                 </span>
             </div>
-        </section>
+        
 `;
 let telaDadosIniciasPergunta = `
 <!-- Tela 3 -->
@@ -206,7 +160,7 @@ async function abrirHome() {
     </section>
     `;
     document.querySelector('main').innerHTML = telaHome;
-    await axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes').then(response => {
+    await axios.get(apiBuzzQuizz).then(response => {
         const quizzesDoServidor = response.data;
         quizzesDoServidor.forEach(element => {
             const backgroundConteinerQuizz = `
@@ -214,8 +168,7 @@ async function abrirHome() {
             background-size: 100%;
             `;
             let conteinerComQuizz = `
-            <!-- Quizz Individual -->
-            <div class="quizz" onclick="abrirQuizz()" style="${backgroundConteinerQuizz}">
+            <div class="quizz" onclick="abrirQuiz(this)" style="${backgroundConteinerQuizz}" id="${element.id}">
                 <span>
                     <p>${element.title}</p>
                 </span>
@@ -225,14 +178,64 @@ async function abrirHome() {
         });
     });
 }
+async function abrirQuiz(identificador) {
+    await axios.get(apiBuzzQuizz + `/${identificador.id}`).then(response => {
+        // Varieaveis importantes
+        const dadosDoQuizzSelecionado = response.data;
+        const backgroundConteinerQuizz = `
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${dadosDoQuizzSelecionado.image}); 
+            background-size: 100%;
+            `;
+        const tituloTemaQuizz = `
+        <section class="tema-quizz" style="${backgroundConteinerQuizz}">
+            <span>
+                <p>${dadosDoQuizzSelecionado.title}</p>
+            </span>
+        </section>
+        <section class="perguntas-quizz">
+        </section>
+        `;
+        const conteinerPerguntas = dadosDoQuizzSelecionado.questions;
+        
+        document.querySelector('main').innerHTML = tituloTemaQuizz;
+
+        conteinerPerguntas.forEach(element => {
+            const conteinerComPerguntaQuizz = `
+            <article class="conteiner-pergunta-maior">
+                <div class="conteiner-pegunta-menor">
+                    <div class="titulo-pergunta" style="background-color: ${element.color};">
+                        <p>${element.title}</p>
+                    </div>
+                    <div class="alternativas-pergunta">
+                    </div>
+                </div>
+            </article>
+            `;
+            const alternativaPerguntas = element.answers;
+            
+            document.querySelector('.perguntas-quizz').innerHTML += conteinerComPerguntaQuizz;
+            alternativaPerguntas.forEach(element => {
+                // Contador pra fazer teu onclick funcionar
+                let contadorMatheus = 1;
+                
+                const conteinerComAlternativa = `
+                <div class="alternativa-individual" onclick="selecionarResposta(this, ${contadorMatheus})">
+                    <img src="${element.image}" alt="hogwarts">
+                    <span>
+                        <p>${element.text}</p>
+                    </span>
+                </div>
+                `;
+                document.querySelector('.alternativas-pergunta').innerHTML += conteinerComAlternativa;
+                contadorMatheus ++
+            });
+            
+        });
+    })
+}
 function criarQuizz() {
     document.querySelector('main').innerHTML = telaDadosIniciasPergunta;
 }
-function abrirQuizz() {
-    document.querySelector('main').innerHTML = telaQuizz;
-}
-
-abrirHome();
 
 // Tela 2
 
@@ -319,5 +322,9 @@ function  renderizarTelaRevisaoFinalQuizz() {
 
 //Botão confirmar - tela 3.4
 function acessarQuizzRecemCriado() {
-    abrirQuizz();
+    abrirQuiz(this);
 }
+
+
+// Executar funções
+abrirHome();
