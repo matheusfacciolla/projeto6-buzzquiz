@@ -3,62 +3,57 @@ let alternativaSelecionada = null;
 let div = null;
 let numero = null;
 
-// Variaveis que guarda as página
-let tela1 =`
-<!-- Tela 1 -->
-<!-- Região onde vai ficar o SEUS QUIZZES -->
-<section class="seus-quizzes">
-    <!-- Se não tiver nenhum Quizz criado ainda -->
-    <article class="adicionar-primeiroquizz">
-        <span>
-            <p>Você não criou nenhum quizz ainda :(</p>
-        </span>
-        <div class="criar-quizz" onclick="criarQuizz()">
-            <p>Criar Quizz</p>
-        </div>
-    </article>
-
-    <!-- Se tiver algum Quizz criado já -->
-    <article class="lista-seus-quizzes">
-        <span>
-            <p>Seus Quizzes</p>
-            <ion-icon name="add-circle" onclick="criarQuizz()"></ion-icon>
-        </span>
-        <!-- Seu Quizz Individual -->
-        <div class="seu-quizz" onclick="abrirQuizz()">
-            <span>
-                <p>O quão Potterhead é você?</p>
+// So pra guardar um html
+let guardarhtml = `
+<!-- Se tiver algum Quizz criado já -->
+<article class="lista-seus-quizzes">
+    <span>
+                <p>Seus Quizzes</p>
+                <ion-icon name="add-circle" onclick="criarQuizz()"></ion-icon>
             </span>
-        </div>
-        <!-- Seu Quizz Individual -->
-        <div class="seu-quizz" onclick="abrirQuizz()">
-            <span>
-                <p>O quão Potterhead é você?</p>
-            </span>
-        </div>
-    </article>
-</section>
-<!-- Região onde fica "Todos os Quizzes" -->
-<section class="todos-quizzes">
-    <!-- Lista contendo "Todos os Quizzes" -->
-    <article class="lista-todos-quizzes">
-        <p>Todos os Quizzes</p>
-        <!-- Quizz Individual -->
-        <div class="quizz" onclick="abrirQuizz()">
-            <span>
-                <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
-            </span>
-        </div>
-        <!-- Quizz Individual -->
-        <div class="quizz" onclick="abrirQuizz()">
-            <span>
-                <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
-            </span>
-        </div>
-    </article>
-</section>
+            <!-- Seu Quizz Individual -->
+            <div class="seu-quizz" onclick="abrirQuizz()">
+                <span>
+                    <p>O quão Potterhead é você?</p>
+                </span>
+            </div>
+            <!-- Seu Quizz Individual -->
+            <div class="seu-quizz" onclick="abrirQuizz()">
+                <span>
+                    <p>O quão Potterhead é você?</p>
+                </span>
+            </div>
+        </article>
+    </section>
 `;
-let tela2 = `
+
+// Variaveis que guarda as página
+let telaHome =`
+    <section class="seus-quizzes">
+        <article class="adicionar-primeiroquizz">
+            <span>
+                <p>Você não criou nenhum quizz ainda :(</p>
+            </span>
+            <div class="criar-quizz" onclick="criarQuizz()">
+                <p>Criar Quizz</p>
+            </div>
+        </article>
+    </section>
+    <section class="todos-quizzes">
+        <p>Todos os Quizzes</p>
+        <article class="lista-todos-quizzes">
+        </article>
+    </section>
+`;
+let conteinerComQuizz = `
+<!-- Quizz Individual -->
+<div class="quizz" onclick="abrirQuizz()">
+    <span>
+        <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
+    </span>
+</div>
+`;
+let telaQuizz = `
 <!-- Tela 2 -->
         <!-- Section com o "Tema" do Quizz -->
         <section class="tema-quizz">
@@ -119,8 +114,7 @@ let tela2 = `
             </div>
         </section>
 `;
-
-let tela31 = `
+let telaDadosIniciasPergunta = `
 <!-- Tela 3 -->
 <!-- Tela 3.1 -->
 <section class="tela_3-1">
@@ -136,8 +130,7 @@ let tela31 = `
     <button class="padrao" type="button" onclick="prosseguirPerguntas()">Prosseguir pra criar perguntas</button>
 </section>
 `;
-
-let tela32 = `
+let telaEscolherPerguntasQuizz = `
 <!-- Tela 3.2 -->
 <section class="tela_3-2">
     <h2>Crie suas perguntas</h2>
@@ -173,8 +166,7 @@ let tela32 = `
         <button class="padrao" type="button" onclick="prosseguirNiveis()">Prosseguir pra criar níveis</button>
 </section>
 `;
-
-let tela33 = `
+let telaEscolherNiveisQuizz = `
 <!-- Tela 3.3 -->
 <section class="tela_3-3">
     <h2>Agora, decida os níveis!</h2>
@@ -202,8 +194,7 @@ let tela33 = `
         <button class="padrao" type="button" onclick="finalizarQuizz()">Finalizar Quizz</button>
 </section>   
 `;
-
-let tela34 = `
+let telaRevisaoFinalQuizz = `
 <!-- Tela 3.4 -->
 <section class="tela_3-4">
     <h2>Seu quizz está pronto!</h2>
@@ -214,23 +205,26 @@ let tela34 = `
     </div>
 
     <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
-    <button class="voltar-home" type="button" onclick="voltarHome()">Voltar pra home</button>
+    <button class="voltar-home" type="button" onclick="home()">Voltar pra home</button>
 </section>  
 `;
 
 // Tela 1
-function home() {
-    document.querySelector('#teste').innerHTML = tela1;
+async function home() {
+    document.querySelector('main').innerHTML = telaHome;
+    await axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes').then(response => {
+        // document.querySelector('.lista-todos-quizzes').innerHTML = conteinerComQuizz;
+        console.log(response.data);
+    });
 }
 function criarQuizz() {
-    document.querySelector('#teste').innerHTML = tela31;
+    document.querySelector('main').innerHTML = telaDadosIniciasPergunta;
 }
 function abrirQuizz() {
-    document.querySelector('#teste').innerHTML = tela2;
+    document.querySelector('main').innerHTML = telaQuizz;
 }
 
 home();
-
 // Tela 2
 
 //selecionar a alternativa desejada
@@ -284,45 +278,37 @@ function scrollar (){
 
 //Botão tela 3.1
 function prosseguirPerguntas() {
-    renderizarTela32();
-    console.log('Prosseguir para criar Perguntas');
+    renderizarTelaEscolherPerguntasQuizz();
 }
 
 //Renderizar tela 3.2
-function renderizarTela32() {
-    document.querySelector('#teste').innerHTML = tela32;
+function renderizarTelaEscolherPerguntasQuizz() {
+    document.querySelector('main').innerHTML = telaEscolherPerguntasQuizz;
 }
 
 //Botão tela 3.2
 function prosseguirNiveis() {
-    renderizarTela33();
+    renderizarTelaEscolherNiveisQuizz();
     console.log('Prosseguir para criar níveis');
 }
 
 //Renderizar tela 3.3
-function renderizarTela33() {
-    document.querySelector('#teste').innerHTML = tela33;
+function renderizarTelaEscolherNiveisQuizz() {
+    document.querySelector('main').innerHTML = telaEscolherNiveisQuizz;
 }
 
 //Botão tela 3.3
 function finalizarQuizz() {
-    renderizarTela34();
+    renderizarTelaRevisaoFinalQuizz();
     console.log('Finalizar Quizz');
 }
 
 //Renderizar tela 3.4
-function renderizarTela34() {
-    document.querySelector('#teste').innerHTML = tela34;
+function  renderizarTelaRevisaoFinalQuizz() {
+    document.querySelector('main').innerHTML = telaRevisaoFinalQuizz;
 }
 
 //Botão confirmar - tela 3.4
-function acessarQuizz() {
+function acessarQuizzRecemCriado() {
     abrirQuizz();
-    console.log('Acessar Quizz');
-}
-
-//Botão voltar - tela 3.4
-function voltarHome() {
-    home();
-    console.log('Voltar Home');
 }
