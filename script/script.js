@@ -85,7 +85,7 @@ let telaQuizz = `
                 <button>
                     <p>Reiniciar Quizz</p>
                 </button>
-                <span onclick="home()">
+                <span onclick="abrirHome()">
                     <p>Voltar para home</p>
                 </span>
             </div>
@@ -182,12 +182,12 @@ let telaRevisaoFinalQuizz = `
     </div>
 
     <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
-    <button class="voltar-home" type="button" onclick="home()">Voltar pra home</button>
+    <button class="voltar-home" type="button" onclick="abrirHome()">Voltar pra home</button>
 </section>  
 `;
 
 // Tela 1
-async function home() {
+async function abrirHome() {
     const telaHome =`
     <section class="seus-quizzes">
         <article class="adicionar-primeiroquizz">
@@ -232,7 +232,7 @@ function abrirQuizz() {
     document.querySelector('main').innerHTML = telaQuizz;
 }
 
-home();
+abrirHome();
 
 // Tela 2
 
