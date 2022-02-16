@@ -28,31 +28,8 @@ let guardarhtml = `
 `;
 
 // Variaveis que guarda as página
-let telaHome =`
-    <section class="seus-quizzes">
-        <article class="adicionar-primeiroquizz">
-            <span>
-                <p>Você não criou nenhum quizz ainda :(</p>
-            </span>
-            <div class="criar-quizz" onclick="criarQuizz()">
-                <p>Criar Quizz</p>
-            </div>
-        </article>
-    </section>
-    <section class="todos-quizzes">
-        <p>Todos os Quizzes</p>
-        <article class="lista-todos-quizzes">
-        </article>
-    </section>
-`;
-let conteinerComQuizz = `
-<!-- Quizz Individual -->
-<div class="quizz" onclick="abrirQuizz()">
-    <span>
-        <p>Acerte os personagens corretos dos Simpsons e prove seu amor!</p>
-    </span>
-</div>
-`;
+
+
 let telaQuizz = `
 <!-- Tela 2 -->
         <!-- Section com o "Tema" do Quizz -->
@@ -211,10 +188,41 @@ let telaRevisaoFinalQuizz = `
 
 // Tela 1
 async function home() {
+    const telaHome =`
+    <section class="seus-quizzes">
+        <article class="adicionar-primeiroquizz">
+            <span>
+                <p>Você não criou nenhum quizz ainda :(</p>
+            </span>
+            <div class="criar-quizz" onclick="criarQuizz()">
+                <p>Criar Quizz</p>
+            </div>
+        </article>
+    </section>
+    <section class="todos-quizzes">
+        <p>Todos os Quizzes</p>
+        <article class="lista-todos-quizzes">
+        </article>
+    </section>
+    `;
     document.querySelector('main').innerHTML = telaHome;
     await axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes').then(response => {
-        // document.querySelector('.lista-todos-quizzes').innerHTML = conteinerComQuizz;
-        console.log(response.data);
+        const quizzesDoServidor = response.data;
+        quizzesDoServidor.forEach(element => {
+            const backgroundConteinerQuizz = `
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
+            background-size: 100%;
+            `;
+            let conteinerComQuizz = `
+            <!-- Quizz Individual -->
+            <div class="quizz" onclick="abrirQuizz()" style="${backgroundConteinerQuizz}">
+                <span>
+                    <p>${element.title}</p>
+                </span>
+            </div>
+            `;
+            document.querySelector('.lista-todos-quizzes').innerHTML += conteinerComQuizz;
+        });
     });
 }
 function criarQuizz() {
@@ -225,6 +233,7 @@ function abrirQuizz() {
 }
 
 home();
+
 // Tela 2
 
 //selecionar a alternativa desejada
