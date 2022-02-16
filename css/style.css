@@ -264,7 +264,7 @@ main {
 .botoes-finalquizz {
     display: flex;
     flex-direction: column;
-    align-items: center;v
+    align-items: center;
 }
 .botoes-finalquizz > button {
     border: none;
@@ -607,7 +607,7 @@ main {
     line-height: 21px;
     color: #FFF5F4;
     border: none;
-    background: #E5E5E5;
+    background-color: #EDEDED;
     color: #818181;
 }
 .voltar-home:hover {
@@ -618,4 +618,17 @@ main {
 
 .escondido {
     display: none;
+}
+
+/* Colocar opaco nas imagens não selecionadas */
+.opaco {
+    opacity: 0.3;
+}
+
+.alternativaCorreta {
+    color: green;
+}
+
+.alternativaIncorreta {
+    color: red;
 }

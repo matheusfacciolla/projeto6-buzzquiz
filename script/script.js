@@ -1,3 +1,8 @@
+//variaveis globais
+let alternativaSelecionada = null;
+let div = null;
+let numero = null;
+
 // Variaveis que guarda as página
 let tela1 =`
 <!-- Tela 1 -->
@@ -74,28 +79,28 @@ let tela2 = `
                     <!-- Alternativas -->
                     <div class="alternativas-pergunta">
                         <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta()">
+                        <div class="alternativa-individual" onclick="selecionarResposta(this, 1)">
                             <img src="imagens/gris.png" alt="hogwarts">
                             <span>
                                 <p>Gatineo</p>
                             </span>
                         </div>
                         <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta()">
+                        <div class="alternativa-individual" onclick="selecionarResposta(this, 2)">    
                             <img src="imagens/gris.png" alt="hogwarts">
                             <span>
                                 <p>Ratata</p>
                             </span>
                         </div>
                         <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta()">
+                        <div class="alternativa-individual" onclick="selecionarResposta(this, 3)">
                             <img src="imagens/gris.png" alt="hogwarts">
                             <span>
                                 <p>Sapo Gordo</p>
                             </span>
                         </div>
                         <!-- Alternativa Individual -->
-                        <div class="alternativa-individual" onclick="selecionarResposta()">
+                        <div class="alternativa-individual" onclick="selecionarResposta(this, 4)">
                             <img src="imagens/gris.png" alt="hogwarts">
                             <span>
                                 <p>Furão</p>
@@ -225,11 +230,52 @@ function abrirQuizz() {
 }
 
 home();
+
 // Tela 2
-function selecionarResposta() {
-    console.log('Selecionou a Resposta');
+
+//selecionar a alternativa desejada
+function selecionarResposta(div, numero) {
+    const todosItensLista = document.querySelectorAll(".alternativa-individual");
+    const todasFontesLista = document.querySelectorAll(".alternativa-individual p");
+    alternativaSelecionada = numero;
+
+    //console.log(todosItensLista)
+    //console.log(div)
+    //console.log(todasFontesLista)
+    //console.log(numero)
+
+    for(let i=0; i<todosItensLista.length; i++){
+        if(todosItensLista[i] !== div){
+            todosItensLista[i].classList.add("opaco");
+            disable = true;
+        }else{
+            div.classList.remove("opaco");
+        }
+    }
+
+    for(let j=0; j<todasFontesLista.length; j++){
+        if(j !== alternativaSelecionada-1){
+            todasFontesLista[j].classList.add("alternativaIncorreta");
+            todasFontesLista[j].disable = true;
+
+        } else {
+            todasFontesLista[j].classList.remove("alternativaIncorreta");
+            todasFontesLista[j].classList.add("alternativaCorreta");
+        }
+    }
+    
+    if( div !== null && numero !== null){
+
+        setTimeout(scrollar, 2000);
+    }
 }
 
+// scrollar para proxima pergunta após 2 segundos da escolha da resposta
+function scrollar (){
+    const botao = document.querySelector(".botoes-finalquizz");
+    //console.log(botao)
+    botao.scrollIntoView();
+}
 
 
 //Tela 3
