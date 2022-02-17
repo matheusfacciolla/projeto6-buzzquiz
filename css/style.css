@@ -257,8 +257,55 @@ main {
     line-height: 22px;
     text-align: center;
     color: #FFFFFF;
-    background-color: #434CA0;
 }
+
+/* Estilos para Resultado */
+.conteiner-resultado-maior {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 375px;
+    padding: 15px 35px 15px 35px;
+    background-color: #ffffff;
+    margin-bottom: 50px;
+}
+.conteiner-resultado-menor {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+}
+.titulo-resultado {
+    display: flex;
+    align-items: center;
+    height: 90px;
+
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 19px;
+    line-height: 22px;
+    text-align: center;
+    color: #FFFFFF;
+    background-color: #EC362D;
+}
+.descricao-resultado {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    margin-top: 10px;
+}
+.descricao-resultado > img{
+    width: 100%;
+}
+.descricao-resultado > p {
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 17px;
+    line-height: 20px;
+    margin-top: 15px;
+    margin-bottom: 1px;
+}
+
 .botoes-finalquizz {
     display: flex;
     flex-direction: column;

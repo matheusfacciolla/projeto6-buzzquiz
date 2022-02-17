@@ -1,6 +1,8 @@
 //variaveis globais
 const apiBuzzQuizz = 'https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes';
-
+let contadorRespostasCertas = 0;
+let contadorAlternativasMarcadas = 0;
+let guardarIdDoQuizzAberto = undefined;
 // So pra guardar um html (Ignora)
 let guardarhtml = `
 <!-- Se tiver algum Quizz criado já -->
@@ -121,6 +123,8 @@ let telaRevisaoFinalQuizz = `
 </section>  
 `;
 
+
+
 // Tela 1
 async function abrirHome() {
     // Renderiza a home até o "Seus Quizzes"
@@ -162,8 +166,12 @@ async function abrirHome() {
         });
     });
 }
+
+
+// Funções Relacionada a abrir o Quizz
 async function abrirQuizz(identificador) {
-    await axios.get(apiBuzzQuizz + `/${identificador.id}`).then(response => {
+    guardarIdDoQuizzAberto = identificador.id;
+    await axios.get(apiBuzzQuizz + `/${guardarIdDoQuizzAberto}`).then(response => {
 
         // Varieaveis importantes
         const dadosDoQuizzSelecionado = response.data;
@@ -181,16 +189,7 @@ async function abrirQuizz(identificador) {
         </section>
         `;
         const conteinerPerguntas = dadosDoQuizzSelecionado.questions;
-        const botoesFinalQuizz = `
-        <div class="botoes-finalquizz">
-                <button>
-                    <p>Reiniciar Quizz</p>
-                </button>
-                <span onclick="abrirHome()">
-                    <p>Voltar para home</p>
-                </span>
-            </div>
-        `;
+        
 
         // Renderiza a Page do Quizz
         document.querySelector('main').innerHTML = tituloTemaQuizz;
@@ -207,7 +206,6 @@ async function abrirQuizz(identificador) {
                 </div>
             </article>
             `;
-            console.log(element);
             document.querySelector('.perguntas-quizz').innerHTML += conteinerComPerguntaQuizz;
 
         });
@@ -228,28 +226,24 @@ async function abrirQuizz(identificador) {
             });
         }
 
-        // Renderiza os Botões do final
-        document.querySelector('main').innerHTML += botoesFinalQuizz;
+        
     })
 }
-function criarQuizz() {
-    document.querySelector('main').innerHTML = telaDadosIniciasPergunta;
-}
-
-
-// Tela 2
-
-//selecionar a alternativa desejada e mostrar resposta correta/incorreta
 function selecionarResposta(element) {
 
+    let arrayComConteinersPergunta = document.querySelectorAll('.conteiner-pergunta-maior');
     let parent = element.parentNode;
+
     if(parent.dataset.clicavel === "false"){
         return;
     }
+    // Guarda o NUM de respostas acertadas
+    if (element.dataset.answer === "true") {
+        contadorRespostasCertas++;
+    }
 
     let alternativas = parent.querySelectorAll(".alternativa-individual")
-
-    for(let i=0; i<alternativas.length; i++){
+    for(let i = 0; i < alternativas.length; i++){
         let node = alternativas[i];
 
         // opaco nas alternativas que não foram clicadas
@@ -265,18 +259,69 @@ function selecionarResposta(element) {
         }
 
         // scrollar para próxima pergunta após 2 segundos da escolha da resposta
-        const scrollar = node.nextElementSibling
-        setTimeout(() => {
-            scrollar.scrollIntoView()
-        }, 2000)
+        // const scrollar = node.nextElementSibling
+        // setTimeout(() => {
+        //     scrollar.scrollIntoView()
+        // }, 2000)
     }
-
+    
+    contadorAlternativasMarcadas++;
+    if (arrayComConteinersPergunta.length === contadorAlternativasMarcadas) {
+        darResultadoQuizz(contadorRespostasCertas, arrayComConteinersPergunta.length)
+    }
     parent.dataset.clicavel = "false";
+
 }
+async function darResultadoQuizz(numAcertos , numElmentos) {
+    let htmlResultadoQuizz = undefined;
+
+    await axios.get(apiBuzzQuizz + `/${guardarIdDoQuizzAberto}`).then(response => {
+        const porcentagemAcerto = Math.round((100 * numAcertos) / numElmentos);
+        const niveisDaResposta = response.data.levels;
+        niveisDaResposta.forEach(element => {
+            if (porcentagemAcerto >= element.minValue) {
+                htmlResultadoQuizz = `
+                <article class="conteiner-resultado-maior">
+                    <div class="conteiner-resultado-menor">
+                            <div class="titulo-resultado">
+                                <p>${porcentagemAcerto}% de acerto: ${element.title}</p>
+                            </div>
+                        <div class="descricao-resultado" >
+                            <img src="${element.image}" alt="">
+                            <p>
+                                ${element.text}
+                            </p>
+                        </div>
+                    </div>
+                </article>
+                <div class="botoes-finalquizz">
+                    <button onclick="abrirQuizz(${guardarIdDoQuizzAberto})">
+                        <p>Reiniciar Quizz</p>
+                    </button>
+                    <span onclick="abrirHome()">
+                        <p>Voltar para home</p>
+                    </span>
+                </div>
+        `;
+            }
+        });
+    })
+
+    document.querySelector('main').innerHTML += htmlResultadoQuizz;
+    // Resetar Variaveis
+    contadorRespostasCertas = 0;
+    contadorAlternativasMarcadas = 0;
+    guardarIdDoQuizzAberto = undefined;
+}
+
+
 
 
 //Tela 3
 
+function criarQuizz() {
+    document.querySelector('main').innerHTML = telaDadosIniciasPergunta;
+}
 //Renderizar tela 3.1
 
 //Botão tela 3.1
