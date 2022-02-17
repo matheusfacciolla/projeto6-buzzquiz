@@ -1,7 +1,4 @@
 //variaveis globais
-let alternativaSelecionada = null;
-let div = null;
-let numero = null;
 const apiBuzzQuizz = 'https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes';
 
 // So pra guardar um html (Ignora)
@@ -205,24 +202,22 @@ async function abrirQuizz(identificador) {
                     <div class="titulo-pergunta" style="background-color: ${element.color};">
                         <p>${element.title}</p>
                     </div>
-                    <div class="alternativas-pergunta">
+                    <div class="alternativas-pergunta" data-clicavel="true">
                     </div>
                 </div>
             </article>
             `;
-            
             console.log(element);
             document.querySelector('.perguntas-quizz').innerHTML += conteinerComPerguntaQuizz;
 
-            
-            
         });
         // Renderiza as alternativas
         for (let index = 0; index < conteinerPerguntas.length; index++) {
+            let conta = 0;
             const alternativaPerguntas = dadosDoQuizzSelecionado.questions[index].answers;
             alternativaPerguntas.forEach(element => {
                 const conteinerComAlternativa = `
-                <div class="alternativa-individual" onclick="selecionarResposta(this)">
+                <div class="alternativa-individual" data-id=${conta++} data-answer=${element.isCorrectAnswer} onclick="selecionarResposta(this)">
                     <img src="${element.image}" alt="hogwarts">
                     <span>
                         <p>${element.text}</p>
@@ -242,53 +237,41 @@ function criarQuizz() {
 }
 
 
-
-
-
 // Tela 2
 
-//selecionar a alternativa desejada
-function selecionarResposta(div, numero) {
-    const todosItensLista = document.querySelectorAll(".alternativa-individual");
-    const todasFontesLista = document.querySelectorAll(".alternativa-individual p");
-    alternativaSelecionada = numero;
+//selecionar a alternativa desejada e mostrar resposta correta/incorreta
+function selecionarResposta(element) {
 
-    //console.log(todosItensLista)
-    //console.log(div)
-    //console.log(todasFontesLista)
-    //console.log(numero)
+    let parent = element.parentNode;
+    if(parent.dataset.clicavel === "false"){
+        return;
+    }
 
-    for(let i=0; i<todosItensLista.length; i++){
-        if(todosItensLista[i] !== div){
-            todosItensLista[i].classList.add("opaco");
-            disable = true;
+    let alternativas = parent.querySelectorAll(".alternativa-individual")
+
+    for(let i=0; i<alternativas.length; i++){
+        let node = alternativas[i];
+
+        // opaco nas alternativas que não foram clicadas
+        if(node.dataset.id !== element.dataset.id){
+            node.classList.add("opaco");
+        }
+
+        // cores nas alternativas corretas e incorretas
+        if(node.dataset.answer === "true"){
+            node.querySelector("p").classList.add("alternativaCorreta");
         }else{
-            div.classList.remove("opaco");
+            node.querySelector("p").classList.add("alternativaIncorreta");
         }
+
+        // scrollar para próxima pergunta após 2 segundos da escolha da resposta
+        const scrollar = node.nextElementSibling
+        setTimeout(() => {
+            scrollar.scrollIntoView()
+        }, 2000)
     }
 
-    for(let j=0; j<todasFontesLista.length; j++){
-        if(j !== alternativaSelecionada-1){
-            todasFontesLista[j].classList.add("alternativaIncorreta");
-            todasFontesLista[j].disable = true;
-
-        } else {
-            todasFontesLista[j].classList.remove("alternativaIncorreta");
-            todasFontesLista[j].classList.add("alternativaCorreta");
-        }
-    }
-    
-    if( div !== null && numero !== null){
-
-        setTimeout(scrollar, 2000);
-    }
-}
-
-// scrollar para proxima pergunta após 2 segundos da escolha da resposta
-function scrollar (){
-    const botao = document.querySelector(".botoes-finalquizz");
-    //console.log(botao)
-    botao.scrollIntoView();
+    parent.dataset.clicavel = "false";
 }
 
 
