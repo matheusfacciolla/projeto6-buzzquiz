@@ -183,7 +183,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100vw;
+    width: 100%;
     height: 142px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(https://images8.alphacoders.com/929/thumb-1920-929202.jpg);
     background-size: 100%;
