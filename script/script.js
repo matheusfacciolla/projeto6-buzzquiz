@@ -254,13 +254,13 @@ function criarQuizz() {
             <input id="qtd-Niveis" type="number" min="2" placeholder="Quantidade de níveis do quizz">
         </article>
     
-        <button class="padrao" type="button" onclick="prosseguirPerguntas()">Prosseguir pra criar perguntas</button>
+        <button class="padrao" type="button" onclick="validarInfoBasicas()">Prosseguir pra criar perguntas</button>
     </section>
     `;
 }
 
 //validação input informações basicas
-function prosseguirPerguntas() {
+function validarInfoBasicas() {
 
     const sectionTela31 = document.querySelector("section.tela_3-1");
     sectionTela31.classList.add("escondido");
@@ -269,11 +269,6 @@ function prosseguirPerguntas() {
     valorUrl = document.getElementById("valor-url").value
     qtdPerguntas = document.getElementById("qtd-Perguntas").value;
     qtdNiveis = document.getElementById("qtd-Niveis").value;
-
-    console.log(tituloQuizz)
-    console.log(valorUrl)
-    console.log(qtdPerguntas)
-    console.log(qtdNiveis)
 
     if(tituloQuizz.length<20 || tituloQuizz.length > 65 || tituloQuizz === null){
         window.location.reload();
@@ -289,11 +284,11 @@ function prosseguirPerguntas() {
         window.location.reload();
         alert("Preencha com minimo 3 perguntas e 2 niveis!")
     }
-    renderizarTelaEscolherPerguntasQuizz()
+    renderizarTelaPerguntasQuizz()
 }
 
 //Renderizar tela 3.2
-function renderizarTelaEscolherPerguntasQuizz() {
+function renderizarTelaPerguntasQuizz() {
 
     document.querySelector('main').innerHTML +=
     `<!-- Tela 3.2 -->
@@ -339,14 +334,11 @@ function renderizarTelaEscolherPerguntasQuizz() {
 
 // validação dos inputs das perguntas
 function validarPerguntas (){
-    for(let i=1; i<=qtdPerguntas; i++){
+    for(let i=1; i<=qtdPerguntas.length; i++){
         
         const perguntaTitulo = document.getElementById(`valor${i}-perguntas`).value;
-        console.log(perguntaTitulo);
         const perguntaCor = document.getElementById(`valor${i}-cor`).value; 
-        console.log(perguntaCor);
         const respostaCorreta = document.getElementById(`valor${i}-resposta-correta`).value;
-        console.log(respostaCorreta);
         const urlCorreta = document.getElementById(`valor${i}-url-correta`).value;
         const respostaIncorreta1 = document.getElementById(`valor${i}-resposta-incorreta1`).value;
         const urlIncorreta1 = document.getElementById(`valor${i}-url-incorreta1`).value;
@@ -363,22 +355,90 @@ function validarPerguntas (){
         let temUrlIncorreta = checarUrl(urlIncorreta1) || checarUrl(urlIncorreta2) || checarUrl(urlIncorreta3);
         
         if(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorreta && temUrlIncorreta){
-            renderizarTelaEscolherNiveisQuizz();
+            renderizarTelaNiveisQuizz();
         }else{
             alert("Preencha os campos com informações corretas!");
         }
     }
 }
+//Renderizar tela 3.3
+function renderizarTelaNiveisQuizz() {
+    const sectionTela32 = document.querySelector("section.tela_3-2");
+    sectionTela32.classList.add("escondido");
 
-//Botão tela 3.3
-function finalizarQuizz() {
-    renderizarTelaRevisaoFinalQuizz();
-    console.log('Finalizar Quizz');
+    document.querySelector('main').innerHTML = `
+    <!-- Tela 3.3 -->
+    <section class="tela_3-3">
+        <h2>Agora, decida os níveis!</h2>`;
+
+    for(let i=1; i<=qtdNiveis; i++){
+        document.querySelector('main').innerHTML += `
+        <div class="niveis">
+            <article class="nivel">
+                <h3>Nível ${i}</h3>
+                <input id="titulo-nivel${i}" type="text" minlength="10" placeholder="Título do nível">
+                <input id="porcentagem-acerto${i}" type="number" min="0" max="100" placeholder="% de acerto mínima">
+                <input id="url-nivel${i}" type="url" placeholder="URL da imagem do nível">
+                <textarea id="descricao-nivel${i}" placeholder="Descrição do nível"></textarea>
+            </article>
+        </div>`;
+    }   
+
+    document.querySelector('main').innerHTML += `
+    <button class="padrao" type="button" onclick="validarNiveis()">Finalizar Quizz</button>
+    </section>   
+    `;
+}
+
+// validação dos inputs dos niveis
+function validarNiveis(){
+    let qtdDiferentesDezero = 1;
+
+    for(let i=1; i<=qtdNiveis.length; i++){
+        tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
+        porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).value;
+        valorUrlNivel = document.getElementById(`url-nivel${i}`).value
+        descricao = document.getElementById(`descricao-nivel${i}`).value;
+    
+        if(tituloNivel.length < 10 || tituloNivel === null){
+            window.location.reload();
+            alert("O título deve conter minimo de 10 caracteres!") 
+        }
+    
+        if(porcentagemAcerto < 0 || porcentagemAcerto > 100){
+            window.location.reload();
+            alert("A porcentagem de acerto deve ser um número entre 0 e 100!")
+        }
+    
+        if(!checarUrl(valorUrlNivel) || valorUrlNivel === null){
+            window.location.reload();
+            alert("Url inválido!");
+        }
+    
+        if(descricao.length < 30 || descricao === null){
+            window.location.reload();
+            alert("A descrição deve conter minimo de 30 caracteres!")
+        }
+    }
+    renderizarTelaRevisaoFinalQuizz()
 }
 
 //Renderizar tela 3.4
 function  renderizarTelaRevisaoFinalQuizz() {
-    document.querySelector('main').innerHTML = telaRevisaoFinalQuizz;
+    document.querySelector('main').innerHTML = `
+    <!-- Tela 3.4 -->
+    <section class="tela_3-4">
+        <h2>Seu quizz está pronto!</h2>
+    
+        <div class="quiz-finalizado">
+            <img src="${valorUrl}" alt="${tituloQuizz}">
+            <p>${tituloQuizz}</p>
+        </div>
+    
+        <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
+        <button class="voltar-home" type="button" onclick="abrirHome()">Voltar pra home</button>
+    </section>  
+    `;
 }
 
 //Botão confirmar - tela 3.4
