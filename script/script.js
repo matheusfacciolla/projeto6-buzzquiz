@@ -3,6 +3,17 @@ const apiBuzzQuizz = 'https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes';
 let contadorRespostasCertas = 0;
 let contadorAlternativasMarcadas = 0;
 let guardarIdDoQuizzAberto = undefined;
+
+let tituloQuizz = "null";
+let valorUrl = "null";
+let qtdPerguntas = "null";
+let qtdNiveis = "null";
+
+const sectionTela31 = document.querySelector("section .tela_3-1");
+const sectionTela32 = document.querySelector("section .tela_3-2");
+const sectionTela33 = document.querySelector(".tela_3-3");
+const sectionTela34 = document.querySelector(".tela_3-4");
+
 // So pra guardar um html (Ignora)
 let guardarhtml = `
 <!-- Se tiver algum Quizz criado já -->
@@ -28,58 +39,7 @@ let guardarhtml = `
 `;
 
 // Variaveis que guarda as página
-let telaDadosIniciasPergunta = `
-<!-- Tela 3 -->
-<!-- Tela 3.1 -->
-<section class="tela_3-1">
-    <h2>Comece pelo começo</h2>
 
-    <article class="infos">
-        <input type="text" minlength="20" maxlength="65" placeholder="Título do seu quizz">
-        <input type="url" placeholder="URL da imagem do seu quizz">
-        <input type="number" min="3" placeholder="Quantidade de perguntas do quizz">
-        <input type="number" min="2" placeholder="Quantidade de níveis do quizz">
-    </article>
-
-    <button class="padrao" type="button" onclick="prosseguirPerguntas()">Prosseguir pra criar perguntas</button>
-</section>
-`;
-let telaEscolherPerguntasQuizz = `
-<!-- Tela 3.2 -->
-<section class="tela_3-2">
-    <h2>Crie suas perguntas</h2>
-
-    <div class="perguntas">
-        <article class="pergunta1">
-            <h3>Pergunta 1</h3>
-            <input type="text" minlength="20" placeholder="Texto da pergunta">
-            <input type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
-            <h3>Resposta correta</h3>
-            <input type="text" minlength="1" placeholder="Resposta correta">
-            <input type="url" placeholder="URL da imagem">
-            <h3>Respostas incorretas</h3>
-            <input type="text" minlength="1" placeholder="Resposta incorreta 1">
-            <input type="url" placeholder="URL da imagem 1">
-            <input type="text" minlength="1" placeholder="Resposta incorreta 2">
-            <input type="url" placeholder="URL da imagem 2">
-            <input type="text" minlength="1" placeholder="Resposta incorreta 3">
-            <input type="url" placeholder="URL da imagem 3">
-        </article>
-
-        <article class="pergunta2">
-            <h3>Pergunta 2</h3>
-            <img src="imagens/Vector.svg" alt="icon">
-        </article>
-
-        <article class="pergunta3">
-            <h3>Pergunta 2</h3>
-            <img src="imagens/Vector.svg" alt="icon">
-        </article>     
-    </div>
-
-        <button class="padrao" type="button" onclick="prosseguirNiveis()">Prosseguir pra criar níveis</button>
-</section>
-`;
 let telaEscolherNiveisQuizz = `
 <!-- Tela 3.3 -->
 <section class="tela_3-3">
@@ -123,8 +83,6 @@ let telaRevisaoFinalQuizz = `
 </section>  
 `;
 
-
-
 // Tela 1
 async function abrirHome() {
     // Renderiza a home até o "Seus Quizzes"
@@ -166,7 +124,6 @@ async function abrirHome() {
         });
     });
 }
-
 
 // Funções Relacionada a abrir o Quizz
 async function abrirQuizz(identificador) {
@@ -259,10 +216,10 @@ function selecionarResposta(element) {
         }
 
         // scrollar para próxima pergunta após 2 segundos da escolha da resposta
-        // const scrollar = node.nextElementSibling
-        // setTimeout(() => {
-        //     scrollar.scrollIntoView()
-        // }, 2000)
+         const scrollar = node.nextElementSibling
+         setTimeout(() => {
+             scrollar.scrollIntoView()
+         }, 2000)
     }
     
     contadorAlternativasMarcadas++;
@@ -314,30 +271,103 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
     guardarIdDoQuizzAberto = undefined;
 }
 
-
-
-
 //Tela 3
-
-function criarQuizz() {
-    document.querySelector('main').innerHTML = telaDadosIniciasPergunta;
-}
 //Renderizar tela 3.1
+function criarQuizz() {
+    document.querySelector('main').innerHTML = `
+    <!-- Tela 3 -->
+    <!-- Tela 3.1 -->
+    <section class="tela_3-1">
+        <h2>Comece pelo começo</h2>
+    
+        <article class="infos">
+            <input type="text" minlength="20" maxlength="65" placeholder="Título do seu quizz">
+            <input type="url" placeholder="URL da imagem do seu quizz">
+            <input type="number" min="3" placeholder="Quantidade de perguntas do quizz">
+            <input type="number" min="2" placeholder="Quantidade de níveis do quizz">
+        </article>
+    
+        <button class="padrao" type="button" onclick="prosseguirPerguntas()">Prosseguir pra criar perguntas</button>
+    </section>
+    `;
+}
 
 //Botão tela 3.1
 function prosseguirPerguntas() {
-    renderizarTelaEscolherPerguntasQuizz();
+
+    const sectionTela31 = document.querySelector("section.tela_3-1");
+    sectionTela31.classList.add("escondido");
+
+    tituloQuizz = document.querySelector("input:first-child").value;
+    valorUrl = document.querySelector("input:nth-child(2)").value
+    qtdPerguntas = document.querySelector("input:nth-child(3)").value;
+    qtdNiveis = document.querySelector("input:last-child").value;
+
+    if(tituloQuizz.length<20 || tituloQuizz.length > 65 || tituloQuizz === null){
+        window.location.reload();
+        alert("O título deve conter minimo de 20 caracteres e máximo de 65!") 
+    }
+
+    if(valorUrl.split(":")[0] !== "https" || valorUrl === null){
+        window.location.reload();
+        alert("Url inválido!");
+    }
+
+    if(qtdPerguntas < 3 || qtdNiveis <2 || qtdNiveis === null || qtdPerguntas === null){
+        window.location.reload();
+        alert("Preencha com minimo 3 perguntas e 2 niveis!")
+    }
+    renderizarTelaEscolherPerguntasQuizz()
 }
 
 //Renderizar tela 3.2
 function renderizarTelaEscolherPerguntasQuizz() {
-    document.querySelector('main').innerHTML = telaEscolherPerguntasQuizz;
+
+    document.querySelector('main').innerHTML +=
+    `<!-- Tela 3.2 -->
+    <section class="tela_3-2 escondido">
+        <h2>Crie suas perguntas</h2>`;
+
+    for(let i=1; i<= qtdPerguntas; i++){
+
+        document.querySelector('main').innerHTML +=
+        `
+            <div class="perguntas">
+                <article class="pergunta">
+
+                    <h3>Pergunta ${i}</h3>
+                    <input id="valor${i}-perguntas" type="text" minlength="20" placeholder="Texto da pergunta">
+                    <input id="valor${i}-cor" type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
+
+                    <h3>Resposta correta</h3>
+                    <input id="valor${i}-resposta-correta" type="text" minlength="1" placeholder="Resposta correta">
+                    <input id="valor${i}-url-correta" type="url" placeholder="URL da imagem">
+
+                    <h3>Respostas incorretas</h3>
+                    <input id="valor${i}-resposta-incorreta1" type="text" minlength="1" placeholder="Resposta incorreta 1">
+                    <input id="valor${i}-url-incorreta1" type="url" placeholder="URL da imagem 1">
+
+                    <input id="valor${i}-resposta-incorreta2" type="text" minlength="1" placeholder="Resposta incorreta 2">
+                    <input id="valor${i}-url-incorreta2" type="url" placeholder="URL da imagem 2">
+
+                    <input id="valor${i}-resposta-incorreta3" type="text" minlength="1" placeholder="Resposta incorreta 3">
+                    <input id="valor${i}-url-incorreta3" type="url" placeholder="URL da imagem 3">
+
+                </article>    
+            </div>
+        `
+    }
+
+    document.querySelector('main').innerHTML +=
+    `
+        <button class="padrao" type="button" onclick="validarPerguntas()">Prosseguir pra criar níveis</button>
+    </section>
+    `;
 }
 
 //Botão tela 3.2
 function prosseguirNiveis() {
     renderizarTelaEscolherNiveisQuizz();
-    console.log('Prosseguir para criar níveis');
 }
 
 //Renderizar tela 3.3
