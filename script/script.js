@@ -9,11 +9,6 @@ let valorUrl = "null";
 let qtdPerguntas = "null";
 let qtdNiveis = "null";
 
-const sectionTela31 = document.querySelector("section .tela_3-1");
-const sectionTela32 = document.querySelector("section .tela_3-2");
-const sectionTela33 = document.querySelector(".tela_3-3");
-const sectionTela34 = document.querySelector(".tela_3-4");
-
 // So pra guardar um html (Ignora)
 let guardarhtml = `
 <!-- Se tiver algum Quizz criado já -->
@@ -40,34 +35,6 @@ let guardarhtml = `
 
 // Variaveis que guarda as página
 
-let telaEscolherNiveisQuizz = `
-<!-- Tela 3.3 -->
-<section class="tela_3-3">
-    <h2>Agora, decida os níveis!</h2>
-
-    <div class="niveis">
-        <article class="nivel1">
-            <h3>Nível 1</h3>
-            <input type="text" minlength="10" placeholder="Título do nível">
-            <input type="number" min="0" max="100" placeholder="% de acerto mínima">
-            <input type="url" placeholder="URL da imagem do nível">
-            <input type="text" minlength="30" placeholder="Descrição do nível">
-        </article>
-
-        <article class="nivel2">
-            <h3>Nível 2</h3>
-            <img src="imagens/Vector.svg" alt="icon">
-        </article>
-
-        <article class="nivel3">
-            <h3>Nível 3</h3>
-            <img src="imagens/Vector.svg" alt="icon">
-        </article>     
-    </div>
-
-        <button class="padrao" type="button" onclick="finalizarQuizz()">Finalizar Quizz</button>
-</section>   
-`;
 let telaRevisaoFinalQuizz = `
 <!-- Tela 3.4 -->
 <section class="tela_3-4">
@@ -216,10 +183,10 @@ function selecionarResposta(element) {
         }
 
         // scrollar para próxima pergunta após 2 segundos da escolha da resposta
-         const scrollar = node.nextElementSibling
-         setTimeout(() => {
-             scrollar.scrollIntoView()
-         }, 2000)
+        //const scrollar = node.nextElementSibling
+        //setTimeout(() => {
+        //    scrollar.scrollIntoView()
+        //}, 2000)
     }
     
     contadorAlternativasMarcadas++;
@@ -281,10 +248,10 @@ function criarQuizz() {
         <h2>Comece pelo começo</h2>
     
         <article class="infos">
-            <input type="text" minlength="20" maxlength="65" placeholder="Título do seu quizz">
-            <input type="url" placeholder="URL da imagem do seu quizz">
-            <input type="number" min="3" placeholder="Quantidade de perguntas do quizz">
-            <input type="number" min="2" placeholder="Quantidade de níveis do quizz">
+            <input id="titulo-quizz" type="text" minlength="20" maxlength="65" placeholder="Título do seu quizz">
+            <input id="valor-url" type="url" placeholder="URL da imagem do seu quizz">
+            <input id="qtd-Perguntas" type="number" min="3" placeholder="Quantidade de perguntas do quizz">
+            <input id="qtd-Niveis" type="number" min="2" placeholder="Quantidade de níveis do quizz">
         </article>
     
         <button class="padrao" type="button" onclick="prosseguirPerguntas()">Prosseguir pra criar perguntas</button>
@@ -292,23 +259,28 @@ function criarQuizz() {
     `;
 }
 
-//Botão tela 3.1
+//validação input informações basicas
 function prosseguirPerguntas() {
 
     const sectionTela31 = document.querySelector("section.tela_3-1");
     sectionTela31.classList.add("escondido");
 
-    tituloQuizz = document.querySelector("input:first-child").value;
-    valorUrl = document.querySelector("input:nth-child(2)").value
-    qtdPerguntas = document.querySelector("input:nth-child(3)").value;
-    qtdNiveis = document.querySelector("input:last-child").value;
+    tituloQuizz = document.getElementById("titulo-quizz").value;
+    valorUrl = document.getElementById("valor-url").value
+    qtdPerguntas = document.getElementById("qtd-Perguntas").value;
+    qtdNiveis = document.getElementById("qtd-Niveis").value;
+
+    console.log(tituloQuizz)
+    console.log(valorUrl)
+    console.log(qtdPerguntas)
+    console.log(qtdNiveis)
 
     if(tituloQuizz.length<20 || tituloQuizz.length > 65 || tituloQuizz === null){
         window.location.reload();
         alert("O título deve conter minimo de 20 caracteres e máximo de 65!") 
     }
 
-    if(valorUrl.split(":")[0] !== "https" || valorUrl === null){
+    if(!checarUrl(valorUrl) || valorUrl === null){
         window.location.reload();
         alert("Url inválido!");
     }
@@ -325,36 +297,36 @@ function renderizarTelaEscolherPerguntasQuizz() {
 
     document.querySelector('main').innerHTML +=
     `<!-- Tela 3.2 -->
-    <section class="tela_3-2 escondido">
+    <section class="tela_3-2">
         <h2>Crie suas perguntas</h2>`;
 
-    for(let i=1; i<= qtdPerguntas; i++){
+    for(let i=1; i<=qtdPerguntas; i++){
 
         document.querySelector('main').innerHTML +=
         `
-            <div class="perguntas">
-                <article class="pergunta">
+        <div class="perguntas">
+            <article class="pergunta">
 
-                    <h3>Pergunta ${i}</h3>
-                    <input id="valor${i}-perguntas" type="text" minlength="20" placeholder="Texto da pergunta">
-                    <input id="valor${i}-cor" type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
+                <h3>Pergunta ${i}</h3>
+                <input id="valor${i}-perguntas" type="text" minlength="20" placeholder="Texto da pergunta">
+                <input id="valor${i}-cor" type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
 
-                    <h3>Resposta correta</h3>
-                    <input id="valor${i}-resposta-correta" type="text" minlength="1" placeholder="Resposta correta">
-                    <input id="valor${i}-url-correta" type="url" placeholder="URL da imagem">
+                <h3>Resposta correta</h3>
+                <input id="valor${i}-resposta-correta" type="text" minlength="1" placeholder="Resposta correta">
+                <input id="valor${i}-url-correta" type="url" placeholder="URL da imagem">
 
-                    <h3>Respostas incorretas</h3>
-                    <input id="valor${i}-resposta-incorreta1" type="text" minlength="1" placeholder="Resposta incorreta 1">
-                    <input id="valor${i}-url-incorreta1" type="url" placeholder="URL da imagem 1">
+                <h3>Respostas incorretas</h3>
+                <input id="valor${i}-resposta-incorreta1" type="text" minlength="1" placeholder="Resposta incorreta 1">
+                <input id="valor${i}-url-incorreta1" type="url" placeholder="URL da imagem 1">
 
-                    <input id="valor${i}-resposta-incorreta2" type="text" minlength="1" placeholder="Resposta incorreta 2">
-                    <input id="valor${i}-url-incorreta2" type="url" placeholder="URL da imagem 2">
+                <input id="valor${i}-resposta-incorreta2" type="text" minlength="1" placeholder="Resposta incorreta 2">
+                <input id="valor${i}-url-incorreta2" type="url" placeholder="URL da imagem 2">
 
-                    <input id="valor${i}-resposta-incorreta3" type="text" minlength="1" placeholder="Resposta incorreta 3">
-                    <input id="valor${i}-url-incorreta3" type="url" placeholder="URL da imagem 3">
+                <input id="valor${i}-resposta-incorreta3" type="text" minlength="1" placeholder="Resposta incorreta 3">
+                <input id="valor${i}-url-incorreta3" type="url" placeholder="URL da imagem 3">
 
-                </article>    
-            </div>
+            </article>    
+        </div>
         `
     }
 
@@ -365,14 +337,37 @@ function renderizarTelaEscolherPerguntasQuizz() {
     `;
 }
 
-//Botão tela 3.2
-function prosseguirNiveis() {
-    renderizarTelaEscolherNiveisQuizz();
-}
-
-//Renderizar tela 3.3
-function renderizarTelaEscolherNiveisQuizz() {
-    document.querySelector('main').innerHTML = telaEscolherNiveisQuizz;
+// validação dos inputs das perguntas
+function validarPerguntas (){
+    for(let i=1; i<=qtdPerguntas; i++){
+        
+        const perguntaTitulo = document.getElementById(`valor${i}-perguntas`).value;
+        console.log(perguntaTitulo);
+        const perguntaCor = document.getElementById(`valor${i}-cor`).value; 
+        console.log(perguntaCor);
+        const respostaCorreta = document.getElementById(`valor${i}-resposta-correta`).value;
+        console.log(respostaCorreta);
+        const urlCorreta = document.getElementById(`valor${i}-url-correta`).value;
+        const respostaIncorreta1 = document.getElementById(`valor${i}-resposta-incorreta1`).value;
+        const urlIncorreta1 = document.getElementById(`valor${i}-url-incorreta1`).value;
+        const respostaIncorreta2 = document.getElementById(`valor${i}-resposta-incorreta2`).value;
+        const urlIncorreta2 = document.getElementById(`valor${i}-url-incorreta2`).value;
+        const respostaIncorreta3 = document.getElementById(`valor${i}-resposta-incorreta3`).value;
+        const urlIncorreta3 = document.getElementById(`valor${i}-url-incorreta3`).value;
+    
+        let tituloOk = (perguntaTitulo.length > 20 && perguntaTitulo !== '');
+        let corOk = checarHexadecimal(perguntaCor);
+        let urlCorretaOk = checarUrl(urlCorreta);
+        let temCorreta = (respostaCorreta !== "");
+        let temIncorreta = (respostaIncorreta1 !== "") || (respostaIncorreta2 !== "") || (respostaIncorreta3 !== "");
+        let temUrlIncorreta = checarUrl(urlIncorreta1) || checarUrl(urlIncorreta2) || checarUrl(urlIncorreta3);
+        
+        if(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorreta && temUrlIncorreta){
+            renderizarTelaEscolherNiveisQuizz();
+        }else{
+            alert("Preencha os campos com informações corretas!");
+        }
+    }
 }
 
 //Botão tela 3.3
@@ -391,6 +386,25 @@ function acessarQuizzRecemCriado() {
     abrirQuizz(this);
 }
 
+// checar hexadecimal
+function checarHexadecimal (str){
+    const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i;
+    return regex.test(str);
+}
+
+// checar url
+function checarUrl (str){
+    if (str != null && str != '') {
+        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ //port
+        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i');
+        return pattern.test(str);
+    }
+    return false;
+}
 
 // Executar funções
 abrirHome();
