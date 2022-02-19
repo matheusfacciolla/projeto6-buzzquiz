@@ -338,36 +338,44 @@ function removerEscondidoPerguntas(numero){
     pergunta.classList.toggle("escondido");
 }
 
+function validarPerguntaIndividual(id){
+    const perguntaTitulo = document.getElementById(`valor${id}-perguntas`).value;
+    const perguntaCor = document.getElementById(`valor${id}-cor`).value; 
+    const respostaCorreta = document.getElementById(`valor${id}-resposta-correta`).value;
+    const urlCorreta = document.getElementById(`valor${id}-url-correta`).value;
+
+    let temIncorretaOk = false;
+    for(let i=1; i<=3; i++){
+        let respostaIncorreta = document.getElementById(`valor${id}-resposta-incorreta${i}`).value;
+        let urlIncorreta = document.getElementById(`valor${id}-url-incorreta${i}`).value;
+
+        let incorretaAtualOk = (respostaIncorreta !== "") && checarUrl(urlIncorreta);
+        temIncorretaOk = temIncorretaOk || incorretaAtualOk;
+    }
+
+    let tituloOk = (perguntaTitulo.length > 20 && perguntaTitulo !== '');
+    let corOk = checarHexadecimal(perguntaCor);
+    let urlCorretaOk = checarUrl(urlCorreta);
+    let temCorreta = (respostaCorreta !== "");
+
+    return tituloOk && corOk && urlCorretaOk && temCorreta && temIncorretaOk;
+}
+
 // validação dos inputs das perguntas
 function validarPerguntas (){
+    let todasValidas = true;
     for(let i=1; i<= qtdPerguntas; i++){
-        
-        const perguntaTitulo = document.getElementById(`valor${i}-perguntas`).value;
-        const perguntaCor = document.getElementById(`valor${i}-cor`).value; 
-        const respostaCorreta = document.getElementById(`valor${i}-resposta-correta`).value;
-        const urlCorreta = document.getElementById(`valor${i}-url-correta`).value;
-        const respostaIncorreta1 = document.getElementById(`valor${i}-resposta-incorreta1`).value;
-        const urlIncorreta1 = document.getElementById(`valor${i}-url-incorreta1`).value;
-        const respostaIncorreta2 = document.getElementById(`valor${i}-resposta-incorreta2`).value;
-        const urlIncorreta2 = document.getElementById(`valor${i}-url-incorreta2`).value;
-        const respostaIncorreta3 = document.getElementById(`valor${i}-resposta-incorreta3`).value;
-        const urlIncorreta3 = document.getElementById(`valor${i}-url-incorreta3`).value;
-    
-        let tituloOk = (perguntaTitulo.length > 20 && perguntaTitulo !== '');
-        let corOk = checarHexadecimal(perguntaCor);
-        let urlCorretaOk = checarUrl(urlCorreta);
-        let temCorreta = (respostaCorreta !== "");
-        let temIncorreta = (respostaIncorreta1 !== "") || (respostaIncorreta2 !== "") || (respostaIncorreta3 !== "");
-        let temUrlIncorreta = checarUrl(urlIncorreta1) || checarUrl(urlIncorreta2) || checarUrl(urlIncorreta3);
-
-        if(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorreta && temUrlIncorreta){
-            document.querySelector("section.tela_3-2").classList.add("escondido");
-            document.querySelector(".todas-perguntas").classList.add("escondido");
-            renderizarTelaNiveisQuizz();
-        }else{
-            alert("Preencha os campos com informações corretas!");
-        }
+        let atualValida = validarPerguntaIndividual(i);
+        todasValidas = todasValidas && atualValida;
     }  
+
+    if(todasValidas){
+        document.querySelector("section.tela_3-2").classList.add("escondido");
+        document.querySelector(".todas-perguntas").classList.add("escondido");
+        renderizarTelaNiveisQuizz();
+    }else{
+        alert("Preencha os campos com informações corretas!");
+    }
 }
 
 //Renderizar tela 3.3
@@ -377,7 +385,7 @@ function renderizarTelaNiveisQuizz() {
     <section class="tela_3-3">
         <h2>Agora, decida os níveis!</h2>`;
 
-    for(let i=0; i< qtdNiveis; i++){
+    for(let i=1; i<= qtdNiveis; i++){
 
         document.querySelector('main').innerHTML +=
         `
@@ -411,31 +419,32 @@ function removerEscondidoNiveis(numero){
 
 // validação dos inputs dos niveis
 function validarNiveis(){
-    let temZero = false;
-
-    for(let i=1; i<=qtdNiveis; i++){  
+    let temPorcentagemZero = false;
+    let todosValidos = true;
+    for(let i=1; i<=qtdNiveis; i++){
         const tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
-        const porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).value;
-        const porcentagemAcertoNumero = document.getElementById(`porcentagem-acerto${i}`).valueAsNumber;
+        const porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).valueAsNumber;
         const valorUrlNivel = document.getElementById(`url-nivel${i}`).value
         const descricao = document.getElementById(`descricao-nivel${i}`).value;
-
-        if(porcentagemAcertoNumero == 0){
-            temZero = true;
+    
+        if(porcentagemAcerto == 0){
+            temPorcentagemZero = true;
         }
-
+    
         let tituloNivelOk = (tituloNivel.length > 10 && tituloNivel !== null);
-        let porcentagemAcertoOk = (porcentagemAcerto > 0 && porcentagemAcerto < 100);
+        let porcentagemAcertoOk = (porcentagemAcerto >= 0 && porcentagemAcerto <= 100);
         let checarUrlNiveislOk = (checarUrl(valorUrlNivel) && valorUrlNivel !== null);
         let descricaoOk = (descricao.length > 30 && descricao !== null);
-        let nivelZeroOk = (temZero == true);
-
-        if(tituloNivelOk && porcentagemAcertoOk && checarUrlNiveislOk && descricaoOk && nivelZeroOk){
-            renderizarTelaRevisaoFinalQuizz()
-        }else{
-            alert("Preencha os campos com informações corretas!");
-        }
+        
+        
+        let atualValido = tituloNivelOk && porcentagemAcertoOk && checarUrlNiveislOk && descricaoOk;
+        todosValidos = todosValidos && atualValido;
     } 
+    if(todosValidos && temPorcentagemZero){
+        renderizarTelaRevisaoFinalQuizz()
+    }else{
+        alert("Preencha os campos com informações corretas!");
+    }
 } 
 
 //Renderizar tela 3.4
