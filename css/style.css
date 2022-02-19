@@ -429,16 +429,21 @@ main {
     line-height: 23px;
 }
 
-.perguntas {
+.todas-perguntas {
+    justify-content: space-between;
+    margin: 0 0 24px;
+}
+
+.pergunta {
     width: 375px;
     height: 825px;
     flex-direction: column;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
-.perguntas input {
+.pergunta input {
     width: 341px;
     height: 46px;
     border-radius: 5px;
@@ -446,7 +451,18 @@ main {
     color: #BABABA;
 }
 
-.perguntas h3 {
+.pergunta {
+    width: 375px;
+    height: 825px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+    background-color: #FFFFFF;
+}
+
+.pergunta h3 {
     font-family: Roboto;
     font-style: normal;
     font-weight: bold;
@@ -457,23 +473,6 @@ main {
     color: #000000;
     margin-right: auto;
     margin-left: 17px;
-}
-
-.perguntas img {
-    margin-left: 332px;
-    position: absolute;
-}
-
-.pergunta {
-    width: 100%;
-    height: 825px;
-    margin-top: 28px;
-    flex-direction: column;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
-    background-color: #FFFFFF;
 }
 
 /* Tela 3.3 */
@@ -506,7 +505,7 @@ main {
 }
 
 .nivel {
-    width: 100%;
+    width: 375px;
     height: 439px;
     flex-direction: column;
     display: flex;
@@ -515,11 +514,13 @@ main {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
     background-color: #ffffff;
 }
-.niveis:first-child {
-    margin-top: 0px;
+
+.todos-niveis {
+    justify-content: space-between;
+    margin: 0 0 24px;
 }
 
-.niveis input {
+.nivel input {
     width: 341px;
     height: 46px;
     border-radius: 5px;
@@ -535,7 +536,7 @@ main {
     color: #BABABA;
 }
 
-.niveis h3 {
+.nivel h3 {
     font-family: Roboto;
     font-style: normal;
     font-weight: bold;
@@ -647,4 +648,42 @@ main {
 
 .alternativaIncorreta {
     color: red;
+}
+
+/* Encapsulado */
+.encapsulado {
+    width: 375px;
+    height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+
+}
+
+.encapsulado:hover {
+    cursor: pointer;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.encapsulado h2 {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    display: flex;
+    align-items: center;
+    color: #000000;
+    margin-right: auto;
+    margin-left: 17px;
+}
+
+.icon-expandir{
+    margin-right: 26px;
+    width: 26px;
+    height: 26px;
 }

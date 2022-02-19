@@ -1,5 +1,6 @@
 //variaveis globais
 const apiBuzzQuizz = 'https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes';
+let scrollar = null;
 let contadorRespostasCertas = 0;
 let contadorAlternativasMarcadas = 0;
 let guardarIdDoQuizzAberto = undefined;
@@ -8,6 +9,8 @@ let tituloQuizz = "null";
 let valorUrl = "null";
 let qtdPerguntas = "null";
 let qtdNiveis = "null";
+let qtdPerguntasNumero = "null";
+let qtdNiveisNumero = "null";
 
 // So pra guardar um html (Ignora)
 let guardarhtml = `
@@ -181,13 +184,15 @@ function selecionarResposta(element) {
         }else{
             node.querySelector("p").classList.add("alternativaIncorreta");
         }
-
-        // scrollar para próxima pergunta após 2 segundos da escolha da resposta
-        //const scrollar = node.nextElementSibling
-        //setTimeout(() => {
-        //    scrollar.scrollIntoView()
-        //}, 2000)
     }
+
+    //scrollar para próxima pergunta após 2 segundos da escolha da resposta
+    scrollar = parent;
+    setTimeout(() => {
+        if(scrollar !== null){
+            scrollar.scrollIntoView();
+        }
+    }, 2000)
     
     contadorAlternativasMarcadas++;
     if (arrayComConteinersPergunta.length === contadorAlternativasMarcadas) {
@@ -232,6 +237,12 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
     })
 
     document.querySelector('main').innerHTML += htmlResultadoQuizz;
+
+    //scrollar para resultado após 2 segundos da escolha da resposta
+    setTimeout(() => {
+        document.querySelector(".botoes-finalquizz").scrollIntoView();
+    }, 2000)
+
     // Resetar Variaveis
     contadorRespostasCertas = 0;
     contadorAlternativasMarcadas = 0;
@@ -261,70 +272,60 @@ function criarQuizz() {
 
 //validação input informações basicas
 function validarInfoBasicas() {
-
-    const sectionTela31 = document.querySelector("section.tela_3-1");
-    sectionTela31.classList.add("escondido");
-
     tituloQuizz = document.getElementById("titulo-quizz").value;
     valorUrl = document.getElementById("valor-url").value
     qtdPerguntas = document.getElementById("qtd-Perguntas").value;
+    qtdPerguntasNumero =document.getElementById("qtd-Perguntas").valueAsNumber;
     qtdNiveis = document.getElementById("qtd-Niveis").value;
+    qtdNiveisNumero = document.getElementById("qtd-Niveis").valueAsNumber;
 
-    if(tituloQuizz.length<20 || tituloQuizz.length > 65 || tituloQuizz === null){
-        window.location.reload();
-        alert("O título deve conter minimo de 20 caracteres e máximo de 65!") 
-    }
+    let tituloQuizzOk = (tituloQuizz.length > 20 && tituloQuizz.length < 65 && tituloQuizz !== null)
+    let checarUrlOk = (checarUrl(valorUrl) && valorUrl !== null)
+    let qtdPerguntasOk = (qtdPerguntasNumero >= 3 && qtdPerguntasNumero !== null)
+    let qtdNiveisOk = (qtdNiveisNumero >= 2 && qtdNiveisNumero !== null)
 
-    if(!checarUrl(valorUrl) || valorUrl === null){
-        window.location.reload();
-        alert("Url inválido!");
+    if (tituloQuizzOk && checarUrlOk && qtdPerguntasOk && qtdNiveisOk){
+        const section31 = document.querySelector(".tela_3-1");
+        section31.classList.add("escondido")
+        renderizarTelaPerguntasQuizz()
+    }else{
+        alert("Preencha os campos com informações corretas!");
     }
-
-    if(qtdPerguntas < 3 || qtdNiveis <2 || qtdNiveis === null || qtdPerguntas === null){
-        window.location.reload();
-        alert("Preencha com minimo 3 perguntas e 2 niveis!")
-    }
-    renderizarTelaPerguntasQuizz()
 }
 
 //Renderizar tela 3.2
 function renderizarTelaPerguntasQuizz() {
-
     document.querySelector('main').innerHTML +=
     `<!-- Tela 3.2 -->
     <section class="tela_3-2">
         <h2>Crie suas perguntas</h2>`;
 
     for(let i=1; i<=qtdPerguntas; i++){
-
         document.querySelector('main').innerHTML +=
         `
-        <div class="perguntas">
+        <div class="todas-perguntas">
+            <div class="encapsulado" onclick="removerEscondidoPerguntas(${i})">
+                <h2>Pergunta ${i}</h2>
+                <ion-icon class="icon-expandir" name="create-outline"></ion-icon>
+            </div> 
+        <div class="perguntas${i} escondido">
             <article class="pergunta">
-
-                <h3>Pergunta ${i}</h3>
                 <input id="valor${i}-perguntas" type="text" minlength="20" placeholder="Texto da pergunta">
                 <input id="valor${i}-cor" type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
-
                 <h3>Resposta correta</h3>
                 <input id="valor${i}-resposta-correta" type="text" minlength="1" placeholder="Resposta correta">
                 <input id="valor${i}-url-correta" type="url" placeholder="URL da imagem">
-
                 <h3>Respostas incorretas</h3>
                 <input id="valor${i}-resposta-incorreta1" type="text" minlength="1" placeholder="Resposta incorreta 1">
                 <input id="valor${i}-url-incorreta1" type="url" placeholder="URL da imagem 1">
-
                 <input id="valor${i}-resposta-incorreta2" type="text" minlength="1" placeholder="Resposta incorreta 2">
                 <input id="valor${i}-url-incorreta2" type="url" placeholder="URL da imagem 2">
-
                 <input id="valor${i}-resposta-incorreta3" type="text" minlength="1" placeholder="Resposta incorreta 3">
                 <input id="valor${i}-url-incorreta3" type="url" placeholder="URL da imagem 3">
-
             </article>    
         </div>
         `
     }
-
     document.querySelector('main').innerHTML +=
     `
         <button class="padrao" type="button" onclick="validarPerguntas()">Prosseguir pra criar níveis</button>
@@ -332,9 +333,14 @@ function renderizarTelaPerguntasQuizz() {
     `;
 }
 
+function removerEscondidoPerguntas(numero){
+    const pergunta = document.querySelector(`.perguntas${numero}`);
+    pergunta.classList.toggle("escondido");
+}
+
 // validação dos inputs das perguntas
 function validarPerguntas (){
-    for(let i=1; i<=qtdPerguntas.length; i++){
+    for(let i=1; i<= qtdPerguntas; i++){
         
         const perguntaTitulo = document.getElementById(`valor${i}-perguntas`).value;
         const perguntaCor = document.getElementById(`valor${i}-cor`).value; 
@@ -353,35 +359,43 @@ function validarPerguntas (){
         let temCorreta = (respostaCorreta !== "");
         let temIncorreta = (respostaIncorreta1 !== "") || (respostaIncorreta2 !== "") || (respostaIncorreta3 !== "");
         let temUrlIncorreta = checarUrl(urlIncorreta1) || checarUrl(urlIncorreta2) || checarUrl(urlIncorreta3);
-        
+
         if(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorreta && temUrlIncorreta){
+            document.querySelector("section.tela_3-2").classList.add("escondido");
+            document.querySelector(".todas-perguntas").classList.add("escondido");
             renderizarTelaNiveisQuizz();
         }else{
             alert("Preencha os campos com informações corretas!");
         }
-    }
+    }  
 }
+
 //Renderizar tela 3.3
 function renderizarTelaNiveisQuizz() {
-    const sectionTela32 = document.querySelector("section.tela_3-2");
-    sectionTela32.classList.add("escondido");
-
-    document.querySelector('main').innerHTML = `
+    document.querySelector('main').innerHTML += `
     <!-- Tela 3.3 -->
     <section class="tela_3-3">
         <h2>Agora, decida os níveis!</h2>`;
 
-    for(let i=1; i<=qtdNiveis; i++){
-        document.querySelector('main').innerHTML += `
-        <div class="niveis">
-            <article class="nivel">
-                <h3>Nível ${i}</h3>
-                <input id="titulo-nivel${i}" type="text" minlength="10" placeholder="Título do nível">
-                <input id="porcentagem-acerto${i}" type="number" min="0" max="100" placeholder="% de acerto mínima">
-                <input id="url-nivel${i}" type="url" placeholder="URL da imagem do nível">
-                <textarea id="descricao-nivel${i}" placeholder="Descrição do nível"></textarea>
-            </article>
-        </div>`;
+    for(let i=0; i< qtdNiveis; i++){
+
+        document.querySelector('main').innerHTML +=
+        `
+        <div class="todos-niveis">
+            <div class="encapsulado" onclick="removerEscondidoNiveis(${i})">
+                <h2>Nível ${i}</h2>
+                <ion-icon class="icon-expandir" name="create-outline"></ion-icon>
+            </div>
+            <div class="niveis${i} escondido">
+                <article class="nivel">
+                    <input id="titulo-nivel${i}" type="text" minlength="10" placeholder="Título do nível">
+                    <input id="porcentagem-acerto${i}" type="number" min="0" max="100" placeholder="% de acerto mínima">
+                    <input id="url-nivel${i}" type="url" placeholder="URL da imagem do nível">
+                    <textarea id="descricao-nivel${i}" placeholder="Descrição do nível"></textarea>
+                </article>
+            </div>
+        </div>
+        `;
     }   
 
     document.querySelector('main').innerHTML += `
@@ -390,38 +404,39 @@ function renderizarTelaNiveisQuizz() {
     `;
 }
 
+function removerEscondidoNiveis(numero){
+    const nivel = document.querySelector(`.niveis${numero}`);
+    nivel.classList.toggle("escondido");
+}
+
 // validação dos inputs dos niveis
 function validarNiveis(){
-    let qtdDiferentesDezero = 1;
+    let temZero = false;
 
-    for(let i=1; i<=qtdNiveis.length; i++){
-        tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
-        porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).value;
-        valorUrlNivel = document.getElementById(`url-nivel${i}`).value
-        descricao = document.getElementById(`descricao-nivel${i}`).value;
-    
-        if(tituloNivel.length < 10 || tituloNivel === null){
-            window.location.reload();
-            alert("O título deve conter minimo de 10 caracteres!") 
+    for(let i=1; i<=qtdNiveis; i++){  
+        const tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
+        const porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).value;
+        const porcentagemAcertoNumero = document.getElementById(`porcentagem-acerto${i}`).valueAsNumber;
+        const valorUrlNivel = document.getElementById(`url-nivel${i}`).value
+        const descricao = document.getElementById(`descricao-nivel${i}`).value;
+
+        if(porcentagemAcertoNumero == 0){
+            temZero = true;
         }
-    
-        if(porcentagemAcerto < 0 || porcentagemAcerto > 100){
-            window.location.reload();
-            alert("A porcentagem de acerto deve ser um número entre 0 e 100!")
+
+        let tituloNivelOk = (tituloNivel.length > 10 && tituloNivel !== null);
+        let porcentagemAcertoOk = (porcentagemAcerto > 0 && porcentagemAcerto < 100);
+        let checarUrlNiveislOk = (checarUrl(valorUrlNivel) && valorUrlNivel !== null);
+        let descricaoOk = (descricao.length > 30 && descricao !== null);
+        let nivelZeroOk = (temZero == true);
+
+        if(tituloNivelOk && porcentagemAcertoOk && checarUrlNiveislOk && descricaoOk && nivelZeroOk){
+            renderizarTelaRevisaoFinalQuizz()
+        }else{
+            alert("Preencha os campos com informações corretas!");
         }
-    
-        if(!checarUrl(valorUrlNivel) || valorUrlNivel === null){
-            window.location.reload();
-            alert("Url inválido!");
-        }
-    
-        if(descricao.length < 30 || descricao === null){
-            window.location.reload();
-            alert("A descrição deve conter minimo de 30 caracteres!")
-        }
-    }
-    renderizarTelaRevisaoFinalQuizz()
-}
+    } 
+} 
 
 //Renderizar tela 3.4
 function  renderizarTelaRevisaoFinalQuizz() {
