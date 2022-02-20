@@ -43,6 +43,7 @@ let guardarhtml = `
 
 // Tela 1
 async function abrirHome() {
+    guardarIdDoQuizzAberto = undefined;
     // Renderiza a home até o "Seus Quizzes"
     const telaHome =`
     <section class="seus-quizzes">
@@ -85,9 +86,11 @@ async function abrirHome() {
 
 // Funções Relacionada a abrir o Quizz
 async function abrirQuizz(identificador) {
-    guardarIdDoQuizzAberto = identificador.id;
-    await axios.get(apiBuzzQuizz + `/${guardarIdDoQuizzAberto}`).then(response => {
 
+    if (guardarIdDoQuizzAberto === undefined) {
+        guardarIdDoQuizzAberto = identificador.id;
+    }
+    await axios.get(apiBuzzQuizz + `/${guardarIdDoQuizzAberto}`).then(response => {
         // Varieaveis importantes
         const dadosDoQuizzSelecionado = response.data;
         const backgroundConteinerQuizz = `
@@ -218,7 +221,7 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
                     </div>
                 </article>
                 <div class="botoes-finalquizz">
-                    <button onclick="abrirQuizz(${guardarIdDoQuizzAberto})">
+                    <button onclick="abrirQuizz()">
                         <p>Reiniciar Quizz</p>
                     </button>
                     <span onclick="abrirHome()">
@@ -240,7 +243,6 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
     // Resetar Variaveis
     contadorRespostasCertas = 0;
     contadorAlternativasMarcadas = 0;
-    guardarIdDoQuizzAberto = undefined;
 }
 
 //Tela 3
