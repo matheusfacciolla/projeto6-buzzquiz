@@ -6,11 +6,16 @@ let contadorAlternativasMarcadas = 0;
 let guardarIdDoQuizzAberto = undefined;
 
 let tituloQuizz = "null";
-let valorUrl = "null";
+let imagemUrlQuizz = "null";
 let qtdPerguntas = "null";
 let qtdNiveis = "null";
-
-let quizzUsuario = {};
+let objetoQuizzUsuario = {
+    title: undefined,
+    image: undefined,
+    questions: undefined,
+    levels: undefined
+};
+let perguntasArray = [];
 
 // So pra guardar um html (Ignora)
 let guardarhtml = `
@@ -262,21 +267,21 @@ function criarQuizz() {
 //validação input informações basicas
 function validarInfoBasicas() {
     tituloQuizz = document.getElementById("titulo-quizz").value;
-    valorUrl = document.getElementById("valor-url").value;
+    imagemUrlQuizz = document.getElementById("valor-url").value;
     qtdPerguntas = document.getElementById("qtd-Perguntas").value;
     qtdNiveis = document.getElementById("qtd-Niveis").value;
 
     let tituloQuizzOk = (tituloQuizz.length > 20 && tituloQuizz.length < 65 && tituloQuizz !== null);
-    let checarUrlOk = (checarUrl(valorUrl) && valorUrl !== null);
+    let checarUrlOk = (checarUrl(imagemUrlQuizz) && imagemUrlQuizz !== null);
     let qtdPerguntasOk = (qtdPerguntas >= 3 && qtdPerguntas !== null);
     let qtdNiveisOk = (qtdNiveis >= 2 && qtdNiveis !== null);
 
     //Adiciona na lista se for válido
     if (tituloQuizzOk && checarUrlOk && qtdPerguntasOk && qtdNiveisOk){
-        quizzUsuario["title"] = tituloQuizz;
-        quizzUsuario["image"] = valorUrl;
+        objetoQuizzUsuario.title = tituloQuizz;
+        objetoQuizzUsuario.image = imagemUrlQuizz;
 
-        console.log(quizzUsuario);
+        console.log(objetoQuizzUsuario);
 
         const section31 = document.querySelector(".tela_3-1");
         section31.classList.add("escondido")
@@ -342,7 +347,7 @@ function validarPerguntaIndividual(id){
     const respostaCorreta = document.getElementById(`valor${id}-resposta-correta`).value;
     const urlCorreta = document.getElementById(`valor${id}-url-correta`).value;
 
-    let respostasObjetos = []
+    let arrayRespostas = [];
     for(let i=1; i<=3; i++){
         let respostaIncorreta = document.getElementById(`valor${id}-resposta-incorreta${i}`).value;
         let urlIncorreta = document.getElementById(`valor${id}-url-incorreta${i}`).value;
@@ -351,11 +356,12 @@ function validarPerguntaIndividual(id){
         //Adiciona na lista se for válido
         if(incorretaAtualOk){
             let incorretaObjeto = {
-                "text": respostaIncorreta,
-                "image": urlIncorreta,
-                "isCorrectAnswer": false
+                text: respostaIncorreta,
+                image: urlIncorreta,
+                isCorrectAnswer: false
             };
-            respostasObjetos.push(incorretaObjeto);             
+            
+            arrayRespostas.push(incorretaObjeto);             
         }
     }
 
@@ -365,53 +371,55 @@ function validarPerguntaIndividual(id){
     let temCorreta = (respostaCorreta !== "");
 
     //pelo menos uma resposta incorreta deve estar na lista (ou seja ser válida)
-    let temIncorretaOk = respostasObjetos.length > 0;
+    let temIncorretaOk = 
+    arrayRespostas.length > 0;
 
     //se pergunta nao for válida retorna null
     if(!(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorretaOk)){
         return null;
     }
+    let perguntaObj = {
+        title: perguntaTitulo,
+        color: perguntaCor,
+        answers: arrayRespostas
+    };
     //Cria objeto para resposta correta e adiciona na lista de respostas
     let respostaCorretaObjeto = {
-        "text": respostaCorreta,
-        "image": urlCorreta,
-        "isCorrectAnswer": true,
+        text: respostaCorreta,
+        image: urlCorreta,
+        isCorrectAnswer: true,
     };
-    respostasObjetos.push(respostaCorretaObjeto)
+    
+    arrayRespostas.push(respostaCorretaObjeto);
     //Cria objeto com toda pergunta
-    let perguntaObj = {
-        "title": perguntaTitulo,
-        "color": perguntaCor,
-        "answers": respostasObjetos
-    };
 
     return perguntaObj;
 }
 
 function validarPerguntas (){
-    let perguntasObjetos = [];
     for(let i=1; i<= qtdPerguntas; i++){
         let atualObjeto = validarPerguntaIndividual(i);
         let atualValida = (atualObjeto !== null);
-     
+        
         //só adiciona na lista se pergunta for válida
         if(atualValida){
-            perguntasObjetos.push(atualObjeto);
+            perguntasArray.push(atualObjeto);
         }
     }  
 
     //A lista tem o mesmo numero de perguntas
-    let todasValidas = (perguntasObjetos.length == qtdPerguntas);
+    let todasValidas = (perguntasArray.length == qtdPerguntas);
 
     if(todasValidas){
-        quizzUsuario["questions"] = perguntasObjetos;
-        console.log(quizzUsuario);
+        objetoQuizzUsuario.questions = perguntasArray;
+        console.log(objetoQuizzUsuario);
 
         document.querySelector("section.tela_3-2").classList.add("escondido");
         renderizarTelaNiveisQuizz();
     }else{
         alert("Preencha os campos com informações corretas!");
     }
+    
 }
 
 //Renderizar tela 3.3
@@ -457,7 +465,7 @@ function removerEscondidoNiveis(numero){
 // validação dos inputs dos niveis
 function validarNiveis(){
     let temPorcentagemZero = false;
-    let niveisObjetos = [];
+    let arrayNiveis = [];
     
     for(let i=1; i<=qtdNiveis; i++){
         const tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
@@ -480,23 +488,23 @@ function validarNiveis(){
         //Se o nivel for válido adiciona o objeto na lista
         if(atualValido){
             let nivelObjeto = {
-                "title": tituloNivel,
-                "image": valorUrlNivel,
-                "text": descricao,
-                "minValue": porcentagemAcerto
+                title: tituloNivel,
+                image: valorUrlNivel,
+                text: descricao,
+                minValue: porcentagemAcerto
             };
     
-            niveisObjetos.push(nivelObjeto);
+            arrayNiveis.push(nivelObjeto);
         }
     } 
 
     //Todos são válidos se lista tem todos os niveis
-    let todosValidos = (niveisObjetos.length == qtdNiveis);
+    let todosValidos = (arrayNiveis.length == qtdNiveis);
 
     //Todos válidos com pelo menos um nivel de porcentagem 0
     if(todosValidos && temPorcentagemZero){
-        quizzUsuario["levels"] = niveisObjetos;
-        console.log(quizzUsuario);
+        objetoQuizzUsuario.levels = arrayNiveis;
+        console.log(objetoQuizzUsuario);
         renderizarTelaRevisaoFinalQuizz();
     }else{
         alert("Preencha os campos com informações corretas!");
@@ -505,12 +513,13 @@ function validarNiveis(){
 
 //Renderizar tela 3.4
 function  renderizarTelaRevisaoFinalQuizz() {
+    enviarQuizz();
     document.querySelector('main').innerHTML = `
     <!-- Tela 3.4 -->
     <section class="tela_3-4">
         <h2>Seu quizz está pronto!</h2>
     
-        <article class="quiz-finalizado" style="background-image: url('${valorUrl}')">
+        <article class="quiz-finalizado" style="background-image: url('${imagemUrlQuizz}')">
             <p>${tituloQuizz}</p>
         </article>
     
@@ -539,6 +548,10 @@ function checarUrl(str){
     }else{
         return false;
     }
+}
+
+function enviarQuizz() {
+    axios.post(apiBuzzQuizz, objetoQuizzUsuario);
 }
 
 // Executar funções
