@@ -9,8 +9,8 @@ let tituloQuizz = "null";
 let valorUrl = "null";
 let qtdPerguntas = "null";
 let qtdNiveis = "null";
-let qtdPerguntasNumero = "null";
-let qtdNiveisNumero = "null";
+
+let quizzUsuario = {};
 
 // So pra guardar um html (Ignora)
 let guardarhtml = `
@@ -34,23 +34,6 @@ let guardarhtml = `
             </div>
         </article>
     </section>
-`;
-
-// Variaveis que guarda as página
-
-let telaRevisaoFinalQuizz = `
-<!-- Tela 3.4 -->
-<section class="tela_3-4">
-    <h2>Seu quizz está pronto!</h2>
-
-    <div class="quiz-finalizado">
-        <img src="imagens/Rectangle 34.png" alt="O quão Potterhead é você?">
-        <p>O quão Potterhead é você?</p>
-    </div>
-
-    <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
-    <button class="voltar-home" type="button" onclick="abrirHome()">Voltar pra home</button>
-</section>  
 `;
 
 // Tela 1
@@ -140,6 +123,7 @@ async function abrirQuizz(identificador) {
         for (let index = 0; index < conteinerPerguntas.length; index++) {
             let conta = 0;
             const alternativaPerguntas = dadosDoQuizzSelecionado.questions[index].answers;
+            alternativaPerguntas.sort(comparador);
             alternativaPerguntas.forEach(element => {
                 const conteinerComAlternativa = `
                 <div class="alternativa-individual" data-id=${conta++} data-answer=${element.isCorrectAnswer} onclick="selecionarResposta(this)">
@@ -156,6 +140,11 @@ async function abrirQuizz(identificador) {
         
     })
 }
+
+function comparador() { 
+    return Math.random() - 0.5; 
+}
+
 function selecionarResposta(element) {
 
     let arrayComConteinersPergunta = document.querySelectorAll('.conteiner-pergunta-maior');
@@ -273,18 +262,22 @@ function criarQuizz() {
 //validação input informações basicas
 function validarInfoBasicas() {
     tituloQuizz = document.getElementById("titulo-quizz").value;
-    valorUrl = document.getElementById("valor-url").value
+    valorUrl = document.getElementById("valor-url").value;
     qtdPerguntas = document.getElementById("qtd-Perguntas").value;
-    qtdPerguntasNumero =document.getElementById("qtd-Perguntas").valueAsNumber;
     qtdNiveis = document.getElementById("qtd-Niveis").value;
-    qtdNiveisNumero = document.getElementById("qtd-Niveis").valueAsNumber;
 
-    let tituloQuizzOk = (tituloQuizz.length > 20 && tituloQuizz.length < 65 && tituloQuizz !== null)
-    let checarUrlOk = (checarUrl(valorUrl) && valorUrl !== null)
-    let qtdPerguntasOk = (qtdPerguntasNumero >= 3 && qtdPerguntasNumero !== null)
-    let qtdNiveisOk = (qtdNiveisNumero >= 2 && qtdNiveisNumero !== null)
+    let tituloQuizzOk = (tituloQuizz.length > 20 && tituloQuizz.length < 65 && tituloQuizz !== null);
+    let checarUrlOk = (checarUrl(valorUrl) && valorUrl !== null);
+    let qtdPerguntasOk = (qtdPerguntas >= 3 && qtdPerguntas !== null);
+    let qtdNiveisOk = (qtdNiveis >= 2 && qtdNiveis !== null);
 
+    //Adiciona na lista se for válido
     if (tituloQuizzOk && checarUrlOk && qtdPerguntasOk && qtdNiveisOk){
+        quizzUsuario["title"] = tituloQuizz;
+        quizzUsuario["image"] = valorUrl;
+
+        console.log(quizzUsuario);
+
         const section31 = document.querySelector(".tela_3-1");
         section31.classList.add("escondido")
         renderizarTelaPerguntasQuizz()
@@ -295,14 +288,15 @@ function validarInfoBasicas() {
 
 //Renderizar tela 3.2
 function renderizarTelaPerguntasQuizz() {
-    document.querySelector('main').innerHTML +=
+
+    let tela32 = document.querySelector('main').innerHTML;
+    tela32 +=
     `<!-- Tela 3.2 -->
     <section class="tela_3-2">
         <h2>Crie suas perguntas</h2>`;
 
     for(let i=1; i<=qtdPerguntas; i++){
-        document.querySelector('main').innerHTML +=
-        `
+        tela32 +=  `
         <div class="todas-perguntas">
             <div class="encapsulado" onclick="removerEscondidoPerguntas(${i})">
                 <h2>Pergunta ${i}</h2>
@@ -324,33 +318,45 @@ function renderizarTelaPerguntasQuizz() {
                 <input id="valor${i}-url-incorreta3" type="url" placeholder="URL da imagem 3">
             </article>    
         </div>
+        </div>
         `
     }
-    document.querySelector('main').innerHTML +=
+    tela32 +=
     `
         <button class="padrao" type="button" onclick="validarPerguntas()">Prosseguir pra criar níveis</button>
     </section>
     `;
+    document.querySelector('main').innerHTML = tela32;
 }
 
+//Encapsular as perguntas
 function removerEscondidoPerguntas(numero){
     const pergunta = document.querySelector(`.perguntas${numero}`);
     pergunta.classList.toggle("escondido");
 }
 
+// validação dos inputs das perguntas
 function validarPerguntaIndividual(id){
     const perguntaTitulo = document.getElementById(`valor${id}-perguntas`).value;
     const perguntaCor = document.getElementById(`valor${id}-cor`).value; 
     const respostaCorreta = document.getElementById(`valor${id}-resposta-correta`).value;
     const urlCorreta = document.getElementById(`valor${id}-url-correta`).value;
 
-    let temIncorretaOk = false;
+    let respostasObjetos = []
     for(let i=1; i<=3; i++){
         let respostaIncorreta = document.getElementById(`valor${id}-resposta-incorreta${i}`).value;
         let urlIncorreta = document.getElementById(`valor${id}-url-incorreta${i}`).value;
 
         let incorretaAtualOk = (respostaIncorreta !== "") && checarUrl(urlIncorreta);
-        temIncorretaOk = temIncorretaOk || incorretaAtualOk;
+        //Adiciona na lista se for válido
+        if(incorretaAtualOk){
+            let incorretaObjeto = {
+                "text": respostaIncorreta,
+                "image": urlIncorreta,
+                "isCorrectAnswer": false
+            };
+            respostasObjetos.push(incorretaObjeto);             
+        }
     }
 
     let tituloOk = (perguntaTitulo.length > 20 && perguntaTitulo !== '');
@@ -358,20 +364,50 @@ function validarPerguntaIndividual(id){
     let urlCorretaOk = checarUrl(urlCorreta);
     let temCorreta = (respostaCorreta !== "");
 
-    return tituloOk && corOk && urlCorretaOk && temCorreta && temIncorretaOk;
+    //pelo menos uma resposta incorreta deve estar na lista (ou seja ser válida)
+    let temIncorretaOk = respostasObjetos.length > 0;
+
+    //se pergunta nao for válida retorna null
+    if(!(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorretaOk)){
+        return null;
+    }
+    //Cria objeto para resposta correta e adiciona na lista de respostas
+    let respostaCorretaObjeto = {
+        "text": respostaCorreta,
+        "image": urlCorreta,
+        "isCorrectAnswer": true,
+    };
+    respostasObjetos.push(respostaCorretaObjeto)
+    //Cria objeto com toda pergunta
+    let perguntaObj = {
+        "title": perguntaTitulo,
+        "color": perguntaCor,
+        "answers": respostasObjetos
+    };
+
+    return perguntaObj;
 }
 
-// validação dos inputs das perguntas
 function validarPerguntas (){
-    let todasValidas = true;
+    let perguntasObjetos = [];
     for(let i=1; i<= qtdPerguntas; i++){
-        let atualValida = validarPerguntaIndividual(i);
-        todasValidas = todasValidas && atualValida;
+        let atualObjeto = validarPerguntaIndividual(i);
+        let atualValida = (atualObjeto !== null);
+     
+        //só adiciona na lista se pergunta for válida
+        if(atualValida){
+            perguntasObjetos.push(atualObjeto);
+        }
     }  
 
+    //A lista tem o mesmo numero de perguntas
+    let todasValidas = (perguntasObjetos.length == qtdPerguntas);
+
     if(todasValidas){
+        quizzUsuario["questions"] = perguntasObjetos;
+        console.log(quizzUsuario);
+
         document.querySelector("section.tela_3-2").classList.add("escondido");
-        document.querySelector(".todas-perguntas").classList.add("escondido");
         renderizarTelaNiveisQuizz();
     }else{
         alert("Preencha os campos com informações corretas!");
@@ -412,6 +448,7 @@ function renderizarTelaNiveisQuizz() {
     `;
 }
 
+// Encapsular os niveis
 function removerEscondidoNiveis(numero){
     const nivel = document.querySelector(`.niveis${numero}`);
     nivel.classList.toggle("escondido");
@@ -420,7 +457,8 @@ function removerEscondidoNiveis(numero){
 // validação dos inputs dos niveis
 function validarNiveis(){
     let temPorcentagemZero = false;
-    let todosValidos = true;
+    let niveisObjetos = [];
+    
     for(let i=1; i<=qtdNiveis; i++){
         const tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
         const porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).valueAsNumber;
@@ -430,18 +468,36 @@ function validarNiveis(){
         if(porcentagemAcerto == 0){
             temPorcentagemZero = true;
         }
-    
+        
+        //validar inputs
         let tituloNivelOk = (tituloNivel.length > 10 && tituloNivel !== null);
         let porcentagemAcertoOk = (porcentagemAcerto >= 0 && porcentagemAcerto <= 100);
         let checarUrlNiveislOk = (checarUrl(valorUrlNivel) && valorUrlNivel !== null);
         let descricaoOk = (descricao.length > 30 && descricao !== null);
         
+        let atualValido = (tituloNivelOk && porcentagemAcertoOk && checarUrlNiveislOk && descricaoOk);
         
-        let atualValido = tituloNivelOk && porcentagemAcertoOk && checarUrlNiveislOk && descricaoOk;
-        todosValidos = todosValidos && atualValido;
+        //Se o nivel for válido adiciona o objeto na lista
+        if(atualValido){
+            let nivelObjeto = {
+                "title": tituloNivel,
+                "image": valorUrlNivel,
+                "text": descricao,
+                "minValue": porcentagemAcerto
+            };
+    
+            niveisObjetos.push(nivelObjeto);
+        }
     } 
+
+    //Todos são válidos se lista tem todos os niveis
+    let todosValidos = (niveisObjetos.length == qtdNiveis);
+
+    //Todos válidos com pelo menos um nivel de porcentagem 0
     if(todosValidos && temPorcentagemZero){
-        renderizarTelaRevisaoFinalQuizz()
+        quizzUsuario["levels"] = niveisObjetos;
+        console.log(quizzUsuario);
+        renderizarTelaRevisaoFinalQuizz();
     }else{
         alert("Preencha os campos com informações corretas!");
     }
@@ -454,10 +510,9 @@ function  renderizarTelaRevisaoFinalQuizz() {
     <section class="tela_3-4">
         <h2>Seu quizz está pronto!</h2>
     
-        <div class="quiz-finalizado">
-            <img src="${valorUrl}" alt="${tituloQuizz}">
+        <article class="quiz-finalizado" style="background-image: url('${valorUrl}')">
             <p>${tituloQuizz}</p>
-        </div>
+        </article>
     
         <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
         <button class="voltar-home" type="button" onclick="abrirHome()">Voltar pra home</button>
@@ -477,17 +532,13 @@ function checarHexadecimal (str){
 }
 
 // checar url
-function checarUrl (str){
+function checarUrl(str){
     if (str != null && str != '') {
-        var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ //port
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-        '(\\#[-a-z\\d_]*)?$','i');
-        return pattern.test(str);
+        let regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+        return regex.test(str);
+    }else{
+        return false;
     }
-    return false;
 }
 
 // Executar funções

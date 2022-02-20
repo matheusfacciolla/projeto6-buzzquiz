@@ -570,7 +570,17 @@ main {
 }
 
 .quiz-finalizado {
+    width: 340px;
+    height: 181px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     position: relative;
+    background-size: cover;
+    background-position: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 65.62%, rgba(0, 0, 0, 0.8) 100%), url(image.png);
+    border-radius: 5px;
+    word-wrap: break-word;
 }
 
 .quiz-finalizado p {
