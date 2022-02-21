@@ -23,6 +23,8 @@ let perguntasArray = [];
 
 // Tela 1
 async function abrirHome() {
+    desserializarQuizzEGuardarEmArray();
+    
     guardarIdDoQuizzAberto = undefined;
     // Renderiza a home até o "Seus Quizzes"
     if (localStorage.length === 0) {
@@ -42,6 +44,10 @@ async function abrirHome() {
             <article class="lista-todos-quizzes">
             </article>
         </section>
+        <div class ="telaCarregando escondido">
+            <img src="imagens/carregando.svg" alt="carregando...">
+            <p>Carregando...</p>
+        </div>
         `;
         document.querySelector('main').innerHTML = telaHomeCriarQuizz;
     } else {
@@ -71,7 +77,7 @@ async function abrirHome() {
                 background-size: 100%;
                 `;
             let seusQuizzes = `
-            <div class="seu-quizz" onclick="abrirQuizz(this)" style="${backgroundConteinerQuizz}">
+            <div class="seu-quizz" onclick="abrirQuizz(this)" style="${backgroundConteinerQuizz}" id="${element.id}">
                 <span>
                     <p>${element.title}</p>
                 </span>
@@ -86,19 +92,27 @@ async function abrirHome() {
     await axios.get(apiBuzzQuizz).then(response => {
         removerTelaCarregando();
         const quizzesDoServidor = response.data;
-        quizzesDoServidor.forEach(element => {
-            const backgroundConteinerQuizz = `
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
-            background-size: 100%;
-            `;
-            let conteinerComQuizz = `
-            <div class="quizz" onclick="abrirQuizz(this)" style="${backgroundConteinerQuizz}" id="${element.id}">
-                <span>
-                    <p>${element.title}</p>
-                </span>
-            </div>
-            `;
-            document.querySelector('.lista-todos-quizzes').innerHTML += conteinerComQuizz;
+        quizzesDoServidor.forEach(element0 => {
+            arrayQuizzesDeserializados.forEach(element1 => {
+                if (element0.id != element1.id) {
+                    console.log('printa');
+                    const backgroundConteinerQuizz = `
+                    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element0.image}); 
+                    background-size: 100%;
+                    `;
+                    let conteinerComQuizz = `
+                    <div class="quizz" onclick="abrirQuizz(this)" style="${backgroundConteinerQuizz}" id="${element0.id}">
+                        <span>
+                            <p>${element0.title}</p>
+                        </span>
+                    </div>
+                    `;
+                    document.querySelector('.lista-todos-quizzes').innerHTML += conteinerComQuizz;
+                }else{
+                    console.log('n printa');
+                }
+            });
+            
         });
     });
 }
@@ -663,7 +677,7 @@ function validarNiveis(){
     }
 } 
 //Renderizar tela 3.4
-function  renderizarTelaRevisaoFinalQuizz() {
+function renderizarTelaRevisaoFinalQuizz() {
     enviarQuizz();
     document.querySelector('main').innerHTML = `
     <!-- Tela 3.4 -->
@@ -674,7 +688,7 @@ function  renderizarTelaRevisaoFinalQuizz() {
             <p>${tituloQuizz}</p>
         </article>
     
-        <button class="acessar-quiz" type="button" onclick="acessarQuizz()">Acessar Quizz</button>
+        <button class="acessar-quiz" type="button" onclick="acessarQuizz(${objetoQuizzUsuario.id})">Acessar Quizz</button>
         <button class="voltar-home" type="button" onclick="abrirHome()">Voltar pra home</button>
     </section>  
     `;
@@ -688,7 +702,7 @@ function checarHexadecimal (str){
     const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i;
     return regex.test(str);
 }
-// checar url
+
 function checarUrl(str){
     if (str != null && str != '') {
         let regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
@@ -727,19 +741,19 @@ function guardarQuizzLocalStorage() {
     localStorage.setItem(`quizz${localStorage.length}`, quizzSerializado);
 }
 function desserializarQuizzEGuardarEmArray() {
+    arrayQuizzesDeserializados = [];
     for (let index = 0; index < localStorage.length; index++) {
-        console.log('teste1');
         let pegarQuizzLocalStorage = localStorage.getItem(`quizz${index}`)
         quizzDeserializados = JSON.parse(pegarQuizzLocalStorage);
         arrayQuizzesDeserializados.push(quizzDeserializados);
-        console.log(arrayQuizzesDeserializados);
     }
 }
 function enviarQuizz() {
-    guardarQuizzLocalStorage();
-    axios.post(apiBuzzQuizz, objetoQuizzUsuario);
+    axios.post(apiBuzzQuizz, objetoQuizzUsuario).then(response => {
+        objetoQuizzUsuario.id = response.data.id;
+        guardarQuizzLocalStorage();
+    });
 }
 
 // Executar funções
-desserializarQuizzEGuardarEmArray();
 abrirHome();
