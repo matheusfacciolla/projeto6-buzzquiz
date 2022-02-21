@@ -477,6 +477,8 @@ function validarPerguntaIndividual(id){
                 document.getElementById(`valor${id}-url-incorreta${i+1}`).style.background = "#FFE9E9";
             }
         }        
+        objetoQuizzUsuario.questions = [];
+        perguntasArray = [];
 
         return null;
     }
@@ -650,6 +652,9 @@ function validarNiveis(){
             if(!descricaoValidos[i]){
                 document.getElementById(`descricao-nivel${i+1}-label`).classList.remove("escondido");
                 document.getElementById(`descricao-nivel${i+1}`).style.background = "#FFE9E9";
+            }else{
+                objetoQuizzUsuario.levels = [];
+                arrayNiveis = [];
             }
         }
     }
