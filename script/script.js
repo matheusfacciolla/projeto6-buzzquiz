@@ -42,14 +42,9 @@ async function abrirHome() {
             <article class="lista-todos-quizzes">
             </article>
         </section>
-        <div class ="telaCarregando escondido">
-            <img src="imagens/carregando.svg" alt="carregando...">
-            <p>Carregando...</p>
-        </div>
         `;
         document.querySelector('main').innerHTML = telaHomeCriarQuizz;
     } else {
-        desserializarQuizzEGuardarEmArray();
         const telaHomeSeusQuizzes = `
             <section class="seus-quizzes">
             <span>
@@ -59,13 +54,22 @@ async function abrirHome() {
             <article class="lista-seus-quizzes">
             </article>
         </section>
+        <section class="todos-quizzes">
+            <p>Todos os Quizzes</p>
+            <article class="lista-todos-quizzes">
+            </article>
+        </section>
+        <div class ="telaCarregando escondido">
+            <img src="imagens/carregando.svg" alt="carregando...">
+            <p>Carregando...</p>
+        </div>
         `;
-        const backgroundConteinerQuizz = `
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
-            background-size: 100%;
-            `;
         document.querySelector('main').innerHTML = telaHomeSeusQuizzes;
         arrayQuizzesDeserializados.forEach(element => {
+            const backgroundConteinerQuizz = `
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
+                background-size: 100%;
+                `;
             let seusQuizzes = `
             <div class="seu-quizz" onclick="abrirQuizz(this)" style="${backgroundConteinerQuizz}">
                 <span>
@@ -80,9 +84,8 @@ async function abrirHome() {
     // Pega os quizzes do servidor e renderiza eles
     mostrarTelaCarregando();
     await axios.get(apiBuzzQuizz).then(response => {
-        
-        const quizzesDoServidor = response.data;
         removerTelaCarregando();
+        const quizzesDoServidor = response.data;
         quizzesDoServidor.forEach(element => {
             const backgroundConteinerQuizz = `
             background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
@@ -721,14 +724,15 @@ function removerTelaCarregando(){
 }
 function guardarQuizzLocalStorage() {
     quizzSerializado = JSON.stringify(objetoQuizzUsuario);
-    localStorage.setItem(`quizz${contadorDosQuizzesLocalStorage}`, quizzSerializado);
-    contadorDosQuizzesLocalStorage++;
+    localStorage.setItem(`quizz${localStorage.length}`, quizzSerializado);
 }
 function desserializarQuizzEGuardarEmArray() {
-    for (let index = 0; index < contadorDosQuizzesLocalStorage; index++) {
+    for (let index = 0; index < localStorage.length; index++) {
+        console.log('teste1');
         let pegarQuizzLocalStorage = localStorage.getItem(`quizz${index}`)
         quizzDeserializados = JSON.parse(pegarQuizzLocalStorage);
         arrayQuizzesDeserializados.push(quizzDeserializados);
+        console.log(arrayQuizzesDeserializados);
     }
 }
 function enviarQuizz() {
@@ -737,4 +741,5 @@ function enviarQuizz() {
 }
 
 // Executar funções
+desserializarQuizzEGuardarEmArray();
 abrirHome();

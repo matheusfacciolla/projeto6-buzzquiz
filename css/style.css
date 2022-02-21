@@ -124,6 +124,7 @@ main {
     height: 180px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(https://images8.alphacoders.com/929/thumb-1920-929202.jpg);
     background-size: 100%;
+    word-wrap: anywhere;
 }
 .seu-quizz > span {
     display: flex;
@@ -151,6 +152,7 @@ main {
 }
 .lista-todos-quizzes {
     width: 340px;
+    word-wrap: anywhere;
 }
 .quizz {
     display: flex;
@@ -165,6 +167,7 @@ main {
 .quizz > span {
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
     width: 301px;
     height: 58px;
     font-family: Roboto;
@@ -215,6 +218,7 @@ main {
     margin-bottom: 50px;
 }
 .conteiner-pegunta-menor {
+    word-wrap: anywhere;
     display: flex;
     flex-direction: column;
     width: 340px;
@@ -752,7 +756,7 @@ label {
     .todos-quizzes > p{
         margin-bottom: 15px;
     }
-    .lista-seus-quizzes {
+    .lista-todos-quizzes {
         display: grid; 
         grid-template-columns: 1fr 1fr 1fr; 
         gap: 15px 15px;
@@ -773,5 +777,26 @@ label {
     .alternativa-individual > span {
         margin-top: 10px;
         min-width: 330px;
+    }
+    .conteiner-resultado-maior {
+        width: 720px;
+    }
+    .conteiner-resultado-menor {
+        width: 688px;
+    }
+    .descricao-resultado {
+        width: 688px;
+    }
+    .seus-quizzes > span {
+        width: 1100px;
+    }
+    .lista-seus-quizzes {
+        justify-content: start;
+        display: grid; 
+        grid-template-columns: 1fr 1fr 1fr; 
+        gap: 15px 15px;
+    }
+    .seu-quizz {
+        width: 360px;
     }
 }
