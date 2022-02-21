@@ -20,7 +20,6 @@ let objetoQuizzUsuario = {
     questions: undefined,
     levels: undefined
 };
-let perguntasArray = [];
 
 // Funções Genericas
 function resetarQuizz(){
@@ -457,7 +456,6 @@ function validarPerguntaIndividual(id){
             }
         }        
         objetoQuizzUsuario.questions = [];
-        perguntasArray = [];
 
         return null;
     }
@@ -481,6 +479,7 @@ function validarPerguntaIndividual(id){
 }
 function validarPerguntas (){
     limparErros();
+    let perguntasArray = [];
     for(let i=1; i<= qtdPerguntas; i++){
         atualObjeto = validarPerguntaIndividual(i);
         let atualValida = (atualObjeto !== null);
