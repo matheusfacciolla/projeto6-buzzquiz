@@ -4,6 +4,10 @@ let scrollar = null;
 let contadorRespostasCertas = 0;
 let contadorAlternativasMarcadas = 0;
 let guardarIdDoQuizzAberto = undefined;
+let contadorDosQuizzesLocalStorage = 0;
+let quizzSerializado = undefined;
+let quizzDeserializados = undefined;
+let arrayQuizzesDeserializados = [];
 
 let tituloQuizz = "null";
 let imagemUrlQuizz = "null";
@@ -17,57 +21,62 @@ let objetoQuizzUsuario = {
 };
 let perguntasArray = [];
 
-// So pra guardar um html (Ignora)
-let guardarhtml = `
-<!-- Se tiver algum Quizz criado já -->
-<article class="lista-seus-quizzes">
-    <span>
-                <p>Seus Quizzes</p>
-                <ion-icon name="add-circle" onclick="criarQuizz()"></ion-icon>
-            </span>
-            <!-- Seu Quizz Individual -->
-            <div class="seu-quizz" onclick="abrirQuizz(this)">
-                <span>
-                    <p>O quão Potterhead é você?</p>
-                </span>
-            </div>
-            <!-- Seu Quizz Individual -->
-            <div class="seu-quizz" onclick="abrirQuizz(this)">
-                <span>
-                    <p>O quão Potterhead é você?</p>
-                </span>
-            </div>
-        </article>
-    </section>
-    `;
-
 // Tela 1
 async function abrirHome() {
     guardarIdDoQuizzAberto = undefined;
     // Renderiza a home até o "Seus Quizzes"
-    const telaHome =`
-    <section class="seus-quizzes">
-        <article class="adicionar-primeiroquizz">
+    if (localStorage.length === 0) {
+        const telaHomeCriarQuizz =`
+        <section class="seus-quizzes">
+            <article class="adicionar-primeiroquizz">
+                <span>
+                    <p>Você não criou nenhum quizz ainda :(</p>
+                </span>
+                <div class="criar-quizz" onclick="criarQuizz()">
+                    <p>Criar Quizz</p>
+                </div>
+            </article>
+        </section>
+        <section class="todos-quizzes">
+            <p>Todos os Quizzes</p>
+            <article class="lista-todos-quizzes">
+            </article>
+        </section>
+        <div class ="telaCarregando escondido">
+            <img src="imagens/carregando.svg" alt="carregando...">
+            <p>Carregando...</p>
+        </div>
+        `;
+        document.querySelector('main').innerHTML = telaHomeCriarQuizz;
+    } else {
+        desserializarQuizzEGuardarEmArray();
+        const telaHomeSeusQuizzes = `
+            <section class="seus-quizzes">
             <span>
-                <p>Você não criou nenhum quizz ainda :(</p>
+                <p>Seus Quizzes</p>
+                <ion-icon name="add-circle" onclick="criarQuizz()"></ion-icon>
             </span>
-            <div class="criar-quizz" onclick="criarQuizz()">
-                <p>Criar Quizz</p>
+            <article class="lista-seus-quizzes">
+            </article>
+        </section>
+        `;
+        const backgroundConteinerQuizz = `
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
+            background-size: 100%;
+            `;
+        document.querySelector('main').innerHTML = telaHomeSeusQuizzes;
+        arrayQuizzesDeserializados.forEach(element => {
+            let seusQuizzes = `
+            <div class="seu-quizz" onclick="abrirQuizz(this)" style="${backgroundConteinerQuizz}">
+                <span>
+                    <p>${element.title}</p>
+                </span>
             </div>
-        </article>
-    </section>
-    <section class="todos-quizzes">
-        <p>Todos os Quizzes</p>
-        <article class="lista-todos-quizzes">
-        </article>
-    </section>
-    <div class ="telaCarregando escondido">
-        <img src="imagens/carregando.svg" alt="carregando...">
-        <p>Carregando...</p>
-    </div>
-    `;
-    
-    document.querySelector('main').innerHTML = telaHome;
+            `;
+            document.querySelector('.lista-seus-quizzes').innerHTML += seusQuizzes;
+        });
+        
+    }
     // Pega os quizzes do servidor e renderiza eles
     mostrarTelaCarregando();
     await axios.get(apiBuzzQuizz).then(response => {
@@ -90,11 +99,8 @@ async function abrirHome() {
         });
     });
 }
-
 // Funções Relacionada a abrir o Quizz
 async function abrirQuizz(identificador) {
-
-
     if (guardarIdDoQuizzAberto === undefined) {
         guardarIdDoQuizzAberto = identificador.id;
     }
@@ -158,11 +164,9 @@ async function abrirQuizz(identificador) {
         
     })
 }
-
 function comparador() { 
     return Math.random() - 0.5; 
 }
-
 function selecionarResposta(element) {
 
     let arrayComConteinersPergunta = document.querySelectorAll('.conteiner-pergunta-maior');
@@ -251,7 +255,6 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
         botaoFinal.scrollIntoView();
     }, 2000);
 }
-
 // Resetar Variaveis
 function resetarQuizz(){
     contadorRespostasCertas = 0;
@@ -259,7 +262,6 @@ function resetarQuizz(){
     window.scrollTo(0, 0);
     abrirQuizz()
 }
-
 //Tela 3
 //Renderizar tela 3.1
 function criarQuizz() {
@@ -284,7 +286,6 @@ function criarQuizz() {
     </section>
     `;
 }
-
 //validação input informações basicas
 function validarInfoBasicas() {
     tituloQuizz = document.getElementById("titulo-quizz").value;
@@ -329,7 +330,6 @@ function validarInfoBasicas() {
         }      
     }
 }
-
 //Renderizar tela 3.2
 function renderizarTelaPerguntasQuizz() {
 
@@ -393,13 +393,11 @@ function renderizarTelaPerguntasQuizz() {
     `;
     document.querySelector('main').innerHTML = tela32;
 }
-
 //Encapsular as perguntas
 function removerEscondidoPerguntas(numero){
     const pergunta = document.querySelector(`.perguntas${numero}`);
     pergunta.classList.toggle("escondido");
 }
-
 // validação dos inputs das perguntas
 function validarPerguntaIndividual(id){
     const perguntaTitulo = document.getElementById(`valor${id}-perguntas`).value;
@@ -500,7 +498,6 @@ function validarPerguntaIndividual(id){
 
     return perguntaObj;
 }
-
 function validarPerguntas (){
     limparErros();
     console.log("aqui")
@@ -532,7 +529,6 @@ function validarPerguntas (){
         renderizarTelaNiveisQuizz();
     }
 }
-
 //Renderizar tela 3.3
 function renderizarTelaNiveisQuizz() {
     document.querySelector('main').innerHTML += `
@@ -570,13 +566,11 @@ function renderizarTelaNiveisQuizz() {
     </section>   
     `;
 }
-
 // Encapsular os niveis
 function removerEscondidoNiveis(numero){
     const nivel = document.querySelector(`.niveis${numero}`);
     nivel.classList.toggle("escondido");
 }
-
 // validação dos inputs dos niveis
 function validarNiveis(){
     let temPorcentagemZero = false;
@@ -660,7 +654,6 @@ function validarNiveis(){
         }
     }
 } 
-
 //Renderizar tela 3.4
 function  renderizarTelaRevisaoFinalQuizz() {
     enviarQuizz();
@@ -678,18 +671,15 @@ function  renderizarTelaRevisaoFinalQuizz() {
     </section>  
     `;
 }
-
 //Botão confirmar - tela 3.4
 function acessarQuizzRecemCriado() {
     abrirQuizz(this);
 }
-
 // checar hexadecimal
 function checarHexadecimal (str){
     const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/i;
     return regex.test(str);
 }
-
 // checar url
 function checarUrl(str){
     if (str != null && str != '') {
@@ -699,7 +689,6 @@ function checarUrl(str){
         return false;
     }
 }
-
 function limparErros(){
     let inputs = document.querySelectorAll("input");
     let labels = document.querySelectorAll("label");
@@ -717,18 +706,28 @@ function limparErros(){
         textareas[i].style.background = "#FFFFFF";
     }
 }
-
 function mostrarTelaCarregando(){
     const telaCarregando = document.querySelector(".telaCarregando");
     telaCarregando.classList.remove("escondido");
 }
-
 function removerTelaCarregando(){
     const telaCarregando = document.querySelector(".telaCarregando");
     telaCarregando.classList.add("escondido");
 }
-
+function guardarQuizzLocalStorage() {
+    quizzSerializado = JSON.stringify(objetoQuizzUsuario);
+    localStorage.setItem(`quizz${contadorDosQuizzesLocalStorage}`, quizzSerializado);
+    contadorDosQuizzesLocalStorage++;
+}
+function desserializarQuizzEGuardarEmArray() {
+    for (let index = 0; index < contadorDosQuizzesLocalStorage; index++) {
+        let pegarQuizzLocalStorage = localStorage.getItem(`quizz${index}`)
+        quizzDeserializados = JSON.parse(pegarQuizzLocalStorage);
+        arrayQuizzesDeserializados.push(quizzDeserializados);
+    }
+}
 function enviarQuizz() {
+    guardarQuizzLocalStorage();
     axios.post(apiBuzzQuizz, objetoQuizzUsuario);
 }
 
