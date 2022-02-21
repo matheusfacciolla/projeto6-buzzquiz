@@ -39,7 +39,7 @@ let guardarhtml = `
             </div>
         </article>
     </section>
-`;
+    `;
 
 // Tela 1
 async function abrirHome() {
@@ -61,12 +61,19 @@ async function abrirHome() {
         <article class="lista-todos-quizzes">
         </article>
     </section>
+    <div class ="telaCarregando escondido">
+        <img src="imagens/carregando.svg" alt="carregando...">
+        <p>Carregando...</p>
+    </div>
     `;
+    
     document.querySelector('main').innerHTML = telaHome;
-
     // Pega os quizzes do servidor e renderiza eles
+    mostrarTelaCarregando();
     await axios.get(apiBuzzQuizz).then(response => {
+        
         const quizzesDoServidor = response.data;
+        removerTelaCarregando();
         quizzesDoServidor.forEach(element => {
             const backgroundConteinerQuizz = `
             background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${element.image}); 
@@ -87,12 +94,15 @@ async function abrirHome() {
 // Funções Relacionada a abrir o Quizz
 async function abrirQuizz(identificador) {
 
+
     if (guardarIdDoQuizzAberto === undefined) {
         guardarIdDoQuizzAberto = identificador.id;
     }
+    mostrarTelaCarregando();
     await axios.get(apiBuzzQuizz + `/${guardarIdDoQuizzAberto}`).then(response => {
         // Varieaveis importantes
         const dadosDoQuizzSelecionado = response.data;
+        removerTelaCarregando();
         const backgroundConteinerQuizz = `
             background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(${dadosDoQuizzSelecionado.image}); 
             background-size: 100%;
@@ -221,14 +231,14 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
                     </div>
                 </article>
                 <div class="botoes-finalquizz">
-                    <button onclick="abrirQuizz()">
+                    <button onclick="resetarQuizz()">
                         <p>Reiniciar Quizz</p>
                     </button>
                     <span onclick="abrirHome()">
                         <p>Voltar para home</p>
                     </span>
                 </div>
-        `;
+                `;
             }
         });
     })
@@ -237,12 +247,17 @@ async function darResultadoQuizz(numAcertos , numElmentos) {
 
     //scrollar para resultado após 2 segundos da escolha da resposta
     setTimeout(() => {
-        document.querySelector(".botoes-finalquizz").scrollIntoView();
-    }, 2000)
+        const botaoFinal = document.querySelector(".botoes-finalquizz");
+        botaoFinal.scrollIntoView();
+    }, 2000);
+}
 
-    // Resetar Variaveis
+// Resetar Variaveis
+function resetarQuizz(){
     contadorRespostasCertas = 0;
     contadorAlternativasMarcadas = 0;
+    window.scrollTo(0, 0);
+    abrirQuizz()
 }
 
 //Tela 3
@@ -256,9 +271,13 @@ function criarQuizz() {
     
         <article class="infos">
             <input id="titulo-quizz" type="text" minlength="20" maxlength="65" placeholder="Título do seu quizz">
+            <label for="titulo-quizz" id="titulo-quizz-label" class="escondido">Deve ter no mínimo 20 e no máximo 65 caracteres</label>
             <input id="valor-url" type="url" placeholder="URL da imagem do seu quizz">
-            <input id="qtd-Perguntas" type="number" min="3" placeholder="Quantidade de perguntas do quizz">
-            <input id="qtd-Niveis" type="number" min="2" placeholder="Quantidade de níveis do quizz">
+            <label for="valor-url" id="valor-url-label" class="escondido">Deve ter formato de URL</label>
+            <input id="qtd-perguntas" type="number" min="3" placeholder="Quantidade de perguntas do quizz">
+            <label for="qtd-perguntas" id="qtd-perguntas-label" class="escondido">Quantidade de perguntas: no mínimo 3 perguntas</label>
+            <input id="qtd-niveis" type="number" min="2" placeholder="Quantidade de níveis do quizz">
+            <label for="qtd-niveis" id="qtd-niveis-label" class="escondido">Quantidade de níveis: no mínimo 2 níveis</label>
         </article>
     
         <button class="padrao" type="button" onclick="validarInfoBasicas()">Prosseguir pra criar perguntas</button>
@@ -270,8 +289,10 @@ function criarQuizz() {
 function validarInfoBasicas() {
     tituloQuizz = document.getElementById("titulo-quizz").value;
     imagemUrlQuizz = document.getElementById("valor-url").value;
-    qtdPerguntas = document.getElementById("qtd-Perguntas").value;
-    qtdNiveis = document.getElementById("qtd-Niveis").value;
+    qtdPerguntas = document.getElementById("qtd-perguntas").value;
+    qtdNiveis = document.getElementById("qtd-niveis").value;
+
+    limparErros();
 
     let tituloQuizzOk = (tituloQuizz.length > 20 && tituloQuizz.length < 65 && tituloQuizz !== null);
     let checarUrlOk = (checarUrl(imagemUrlQuizz) && imagemUrlQuizz !== null);
@@ -286,10 +307,26 @@ function validarInfoBasicas() {
         console.log(objetoQuizzUsuario);
 
         const section31 = document.querySelector(".tela_3-1");
-        section31.classList.add("escondido")
-        renderizarTelaPerguntasQuizz()
+        section31.classList.add("escondido");
+        renderizarTelaPerguntasQuizz();
+
     }else{
-        alert("Preencha os campos com informações corretas!");
+        if(!tituloQuizzOk){
+            document.getElementById("titulo-quizz-label").classList.remove("escondido");
+            document.getElementById("titulo-quizz").style.backgroundColor = "#FFE9E9";
+        }  
+        if(!checarUrlOk){
+            document.getElementById("valor-url-label").classList.remove("escondido");
+            document.getElementById("valor-url").style.backgroundColor = "#FFE9E9";
+        }    
+        if(!qtdPerguntasOk){
+            document.getElementById("qtd-perguntas-label").classList.remove("escondido");
+            document.getElementById("qtd-perguntas").style.backgroundColor = "#FFE9E9";
+        } 
+        if(!qtdNiveis){
+            document.getElementById("qtd-niveis-label").classList.remove("escondido");
+            document.getElementById("qtd-niveis").style.backgroundColor = "#FFE9E9";
+        }      
     }
 }
 
@@ -312,21 +349,42 @@ function renderizarTelaPerguntasQuizz() {
         <div class="perguntas${i} escondido">
             <article class="pergunta">
                 <input id="valor${i}-perguntas" type="text" minlength="20" placeholder="Texto da pergunta">
+                <label for="valor${i}-perguntas" id="valor${i}-perguntas-label" class="escondido">No mínimo 20 caracteres</label>
+                
                 <input id="valor${i}-cor" type="text" minlength="7" maxlength="7" placeholder="Cor de fundo da pergunta">
+                <label for="valor${i}-cor" id="valor${i}-cor-label" class="escondido">Cor em hexadecimal</label>
+                
                 <h3>Resposta correta</h3>
+                
                 <input id="valor${i}-resposta-correta" type="text" minlength="1" placeholder="Resposta correta">
+                <label for="valor${i}-resposta" id="valor${i}-resposta-label" class="escondido">Não pode estar vazio</label>
+
                 <input id="valor${i}-url-correta" type="url" placeholder="URL da imagem">
+                <label for="valor${i}-url-correta" id="valor${i}-url-correta-label" class="escondido">Deve ter formato de URL</label>
+                
                 <h3>Respostas incorretas</h3>
+                
                 <input id="valor${i}-resposta-incorreta1" type="text" minlength="1" placeholder="Resposta incorreta 1">
+                <label for="valor${i}-resposta-incorreta1" id="valor${i}-resposta-incorreta1-label" class="escondido">Não pode estar vazio</label>
+                
                 <input id="valor${i}-url-incorreta1" type="url" placeholder="URL da imagem 1">
+                <label for="valor${i}-url-incorreta1" id="valor${i}-url-incorreta1-label" class="escondido">Deve ter formato de URL</label>
+                
                 <input id="valor${i}-resposta-incorreta2" type="text" minlength="1" placeholder="Resposta incorreta 2">
+                <label for="valor${i}-resposta-incorreta2" id="valor${i}-resposta-incorreta2-label" class="escondido">Não pode estar vazio</label>
+                
                 <input id="valor${i}-url-incorreta2" type="url" placeholder="URL da imagem 2">
+                <label for="valor${i}-url-incorreta2" id="valor${i}-url-incorreta2-label" class="escondido">Deve ter formato de URL</label>
+                
                 <input id="valor${i}-resposta-incorreta3" type="text" minlength="1" placeholder="Resposta incorreta 3">
+                <label for="valor${i}-resposta-incorreta3" id="valor${i}-resposta-incorreta3-label" class="escondido">Não pode estar vazio</label>
+                
                 <input id="valor${i}-url-incorreta3" type="url" placeholder="URL da imagem 3">
+                <label for="valor${i}-url-incorreta3" id="valor${i}-url-incorreta3-label" class="escondido">Deve ter formato de URL</label>
             </article>    
         </div>
         </div>
-        `
+        `;
     }
     tela32 +=
     `
@@ -350,11 +408,21 @@ function validarPerguntaIndividual(id){
     const urlCorreta = document.getElementById(`valor${id}-url-correta`).value;
 
     let arrayRespostas = [];
+    let incorretaTitulosValidos = []
+    let incorretaUrlValidos = [];
+    
     for(let i=1; i<=3; i++){
         let respostaIncorreta = document.getElementById(`valor${id}-resposta-incorreta${i}`).value;
         let urlIncorreta = document.getElementById(`valor${id}-url-incorreta${i}`).value;
 
         let incorretaAtualOk = (respostaIncorreta !== "") && checarUrl(urlIncorreta);
+
+        let tituloAtualInvalido = (respostaIncorreta !== "") && (urlIncorreta !== "");
+        let urlAtualInvalida = (!checarUrl(urlIncorreta)) && (respostaIncorreta !== "");
+
+        incorretaTitulosValidos.push(tituloAtualInvalido);
+        incorretaUrlValidos.push(urlAtualInvalida);
+        
         //Adiciona na lista se for válido
         if(incorretaAtualOk){
             let incorretaObjeto = {
@@ -373,55 +441,96 @@ function validarPerguntaIndividual(id){
     let temCorreta = (respostaCorreta !== "");
 
     //pelo menos uma resposta incorreta deve estar na lista (ou seja ser válida)
-    let temIncorretaOk = 
-    arrayRespostas.length > 0;
+    let temIncorretaOk = arrayRespostas.length > 0;
 
     //se pergunta nao for válida retorna null
     if(!(tituloOk && corOk && urlCorretaOk && temCorreta && temIncorretaOk)){
+        if(!tituloOk){
+            document.getElementById(`valor${id}-perguntas-label`).classList.remove("escondido");
+            document.getElementById(`valor${id}-perguntas`).style.background = "#FFE9E9";
+        }
+        if(!corOk){
+            document.getElementById(`valor${id}-cor-label`).classList.remove("escondido");
+            document.getElementById(`valor${id}-cor`).style.background = "#FFE9E9";
+        }
+        if(!urlCorretaOk){
+            document.getElementById(`valor${id}-url-correta-label`).classList.remove("escondido");
+            document.getElementById(`valor${id}-url-correta`).style.background = "#FFE9E9";
+        }
+        if(!temCorreta){
+            document.getElementById(`valor${id}-resposta-label`).classList.remove("escondido");
+            document.getElementById(`valor${id}-resposta-correta`).style.background = "#FFE9E9";
+        }
+        if(!temIncorretaOk){
+            document.getElementById(`valor${id}-resposta-incorreta1-label`).classList.remove("escondido");
+            document.getElementById(`valor${id}-resposta-incorreta1`).style.background = "#FFE9E9";
+            
+            document.getElementById(`valor${id}-url-incorreta1-label`).classList.remove("escondido");
+            document.getElementById(`valor${id}-url-incorreta1`).style.background = "#FFE9E9";
+        }
+
+        for(let i=0; i<3; i++){
+            if(incorretaTitulosValidos[i]){
+                document.getElementById(`valor${id}-resposta-incorreta${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`valor${id}-resposta-incorreta${i+1}`).style.background = "#FFE9E9";
+            }
+            if(incorretaUrlValidos[i]){
+                document.getElementById(`valor${id}-url-incorreta${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`valor${id}-url-incorreta${i+1}`).style.background = "#FFE9E9";
+            }
+        }        
+
         return null;
     }
-    let perguntaObj = {
-        title: perguntaTitulo,
-        color: perguntaCor,
-        answers: arrayRespostas
-    };
+    
     //Cria objeto para resposta correta e adiciona na lista de respostas
     let respostaCorretaObjeto = {
         text: respostaCorreta,
         image: urlCorreta,
         isCorrectAnswer: true,
     };
-    
     arrayRespostas.push(respostaCorretaObjeto);
+ 
     //Cria objeto com toda pergunta
+    let perguntaObj = {
+        title: perguntaTitulo,
+        color: perguntaCor,
+        answers: arrayRespostas
+    };
 
     return perguntaObj;
 }
 
 function validarPerguntas (){
+    limparErros();
+    console.log("aqui")
+
     for(let i=1; i<= qtdPerguntas; i++){
-        let atualObjeto = validarPerguntaIndividual(i);
+        atualObjeto = validarPerguntaIndividual(i);
         let atualValida = (atualObjeto !== null);
+        console.log("atual",atualObjeto)
         
         //só adiciona na lista se pergunta for válida
         if(atualValida){
             perguntasArray.push(atualObjeto);
         }
     }  
+    console.log("aqui2")
+    console.log("perguntasArray.length",perguntasArray.length)
+    console.log("perguntasArray",perguntasArray)
+
 
     //A lista tem o mesmo numero de perguntas
     let todasValidas = (perguntasArray.length == qtdPerguntas);
 
     if(todasValidas){
+        console.log("aqui3")
         objetoQuizzUsuario.questions = perguntasArray;
         console.log(objetoQuizzUsuario);
 
         document.querySelector("section.tela_3-2").classList.add("escondido");
         renderizarTelaNiveisQuizz();
-    }else{
-        alert("Preencha os campos com informações corretas!");
     }
-    
 }
 
 //Renderizar tela 3.3
@@ -443,9 +552,13 @@ function renderizarTelaNiveisQuizz() {
             <div class="niveis${i} escondido">
                 <article class="nivel">
                     <input id="titulo-nivel${i}" type="text" minlength="10" placeholder="Título do nível">
+                    <label for="titulo-nivel${i}" id="titulo-nivel${i}-label" class="escondido">Mínimo de 10 caracteres</label>
                     <input id="porcentagem-acerto${i}" type="number" min="0" max="100" placeholder="% de acerto mínima">
+                    <label for="porcentagem-acerto${i}" id="porcentagem-acerto${i}-label" class="escondido">Número entre 0 e 100 (um deles tem que ser zero)</label>
                     <input id="url-nivel${i}" type="url" placeholder="URL da imagem do nível">
+                    <label for="url-nivel${i}" id="url-nivel${i}-label" class="escondido">Deve ter formato de URL</label>
                     <textarea id="descricao-nivel${i}" placeholder="Descrição do nível"></textarea>
+                    <label for="descricao-nivel${i}" id="descricao-nivel${i}-label" class="escondido">Mínimo de 30 caracteres</label>
                 </article>
             </div>
         </div>
@@ -468,11 +581,17 @@ function removerEscondidoNiveis(numero){
 function validarNiveis(){
     let temPorcentagemZero = false;
     let arrayNiveis = [];
+    let titulosValidos = [];
+    let porcentagemValidos = [];
+    let checarUrlValidos = [];
+    let descricaoValidos = [];
     
+    limparErros();
+
     for(let i=1; i<=qtdNiveis; i++){
         const tituloNivel = document.getElementById(`titulo-nivel${i}`).value;
         const porcentagemAcerto = document.getElementById(`porcentagem-acerto${i}`).valueAsNumber;
-        const valorUrlNivel = document.getElementById(`url-nivel${i}`).value
+        const valorUrlNivel = document.getElementById(`url-nivel${i}`).value;
         const descricao = document.getElementById(`descricao-nivel${i}`).value;
     
         if(porcentagemAcerto == 0){
@@ -486,6 +605,11 @@ function validarNiveis(){
         let descricaoOk = (descricao.length > 30 && descricao !== null);
         
         let atualValido = (tituloNivelOk && porcentagemAcertoOk && checarUrlNiveislOk && descricaoOk);
+
+        titulosValidos.push(tituloNivelOk);
+        porcentagemValidos.push(porcentagemAcertoOk);
+        checarUrlValidos.push(checarUrlNiveislOk);
+        descricaoValidos.push(descricaoOk);
         
         //Se o nivel for válido adiciona o objeto na lista
         if(atualValido){
@@ -495,7 +619,6 @@ function validarNiveis(){
                 text: descricao,
                 minValue: porcentagemAcerto
             };
-    
             arrayNiveis.push(nivelObjeto);
         }
     } 
@@ -508,8 +631,33 @@ function validarNiveis(){
         objetoQuizzUsuario.levels = arrayNiveis;
         console.log(objetoQuizzUsuario);
         renderizarTelaRevisaoFinalQuizz();
+
     }else{
-        alert("Preencha os campos com informações corretas!");
+        if(!temPorcentagemZero){
+            for(let i=0; i<qtdNiveis; i++){
+                document.getElementById(`porcentagem-acerto${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`porcentagem-acerto${i+1}`).style.background = "#FFE9E9";
+            }
+        }
+
+        for(let i=0; i<qtdNiveis; i++){
+            if(!titulosValidos[i]){
+                document.getElementById(`titulo-nivel${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`titulo-nivel${i+1}`).style.background = "#FFE9E9";
+            }
+            if(!porcentagemValidos[i]){
+                document.getElementById(`porcentagem-acerto${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`porcentagem-acerto${i+1}`).style.background = "#FFE9E9";
+            }
+            if(!checarUrlValidos[i]){
+                document.getElementById(`url-nivel${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`url-nivel${i+1}`).style.background = "#FFE9E9";
+            }
+            if(!descricaoValidos[i]){
+                document.getElementById(`descricao-nivel${i+1}-label`).classList.remove("escondido");
+                document.getElementById(`descricao-nivel${i+1}`).style.background = "#FFE9E9";
+            }
+        }
     }
 } 
 
@@ -550,6 +698,34 @@ function checarUrl(str){
     }else{
         return false;
     }
+}
+
+function limparErros(){
+    let inputs = document.querySelectorAll("input");
+    let labels = document.querySelectorAll("label");
+    let textareas = document.querySelectorAll("textarea");
+
+    for(let i=0; i<inputs.length; i++){
+        inputs[i].style.background = "#FFFFFF";
+    }
+
+    for(let i=0; i<labels.length; i++){
+        labels[i].classList.add("escondido");
+    }
+
+    for(let i=0; i<textareas.length; i++){
+        textareas[i].style.background = "#FFFFFF";
+    }
+}
+
+function mostrarTelaCarregando(){
+    const telaCarregando = document.querySelector(".telaCarregando");
+    telaCarregando.classList.remove("escondido");
+}
+
+function removerTelaCarregando(){
+    const telaCarregando = document.querySelector(".telaCarregando");
+    telaCarregando.classList.add("escondido");
 }
 
 function enviarQuizz() {
